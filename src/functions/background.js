@@ -41,7 +41,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
                 displayNotification(
                     chrome.i18n.getMessage('updateNotificationTitle', manifest.version),
                     chrome.i18n.getMessage('updateNotificationMessage'),
-                    "https://github.com/emvaized/selecton-extension/blob/master/CHANGELOG.md"
+                    "https://github.com/kach17/selecton-extension/blob/master/CHANGELOG.md"
                 );
             }
         });

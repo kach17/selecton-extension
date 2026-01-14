@@ -8,7 +8,6 @@
 
 <body>
     <form>
-        <!-- <input id="searchOptionsField" style="width: 100%" type="text" placeholder="Search options..."> -->
         <h4 id='allChangesSavedAutomaticallyHeader'></h4>
 
         <div class='option'> <label><input type="checkbox" id="enabled"> </label></div>
@@ -29,7 +28,7 @@
                         </select>
                     </label>
                 </div>
-                <div class='option'> <label><input type="checkbox" id="showButtonLabelOnHover"> </label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="showButtonLabelOnHover"> </label></div>
                 <div class='option'> <label><input type="checkbox" id="invertColorOnDarkWebsite"> </label></div>
                 <div class='option'> <label><input type="checkbox" id="showButtonBorders"> </label></div>
                 <div class='option'> <label><input type="checkbox" id="showTooltipArrow"> </label></div>
@@ -38,15 +37,15 @@
                 <hr />
                 <div class='option'> <label><input type="checkbox" id="useCustomStyle"></label></div>
                 <div id='customStylesSection'>
-                    <div class='option'> <label><input type="color" id="tooltipBackground"></label></div>
-                    <div class='option'> <label><input type="color" id="tooltipInvertedBackground"></label></div>
-                    <div class='option'> <label><input type="number" min='1.0' max='50.0' step='0.5' id="fontSize"></label></div>
-                    <div class='option'> <label><input type="number" min='0' max='50' step='1' id="borderRadius"></label>
+                    <div class='option child-option'> <label><input type="color" id="tooltipBackground"></label></div>
+                    <div class='option child-option'> <label><input type="color" id="tooltipInvertedBackground"></label></div>
+                    <div class='option child-option'> <label><input type="number" min='1.0' max='50.0' step='0.5' id="fontSize"></label></div>
+                    <div class='option child-option'> <label><input type="number" min='0' max='50' step='1' id="borderRadius"></label>
                     </div>
-                    <div class='option'> <label><input type="number" min='0.05' max='1.0' step='0.05' id="tooltipOpacity"></label></div>
-                    <div class='option'> <label><input type="checkbox" id="fullOpacityOnHover"></label></div>
-                    <div class='option'> <label><input type="checkbox" id="addTooltipShadow"></label></div>
-                    <div class='option'> <label><input type="number" min='0.05' max='1.0' step='0.05' id="shadowOpacity"></label></div>
+                    <div class='option child-option'> <label><input type="number" min='0.05' max='1.0' step='0.05' id="tooltipOpacity"></label></div>
+                    <div class='option child-option'> <label><input type="checkbox" id="fullOpacityOnHover"></label></div>
+                    <div class='option child-option'> <label><input type="checkbox" id="addTooltipShadow"></label></div>
+                    <div class='option child-option'> <label><input type="number" min='0.05' max='1.0' step='0.05' id="shadowOpacity"></label></div>
                 </div>
             </div>
 
@@ -56,7 +55,7 @@
                 <div class='option'> <label><input type="checkbox" id="removeSelectionOnActionButtonClick"></label>
                 </div> 
                 <div class='option'> <label><input type="checkbox" id="addDragHandles"></label></div>
-                <div class='option'><label><select id="dragHandleStyle">
+                <div class='option child-option'><label><select id="dragHandleStyle">
                             <option value="circle">Circle</option>
                             <option value="triangle">Triangle</option>
                             <option value="square">Square</option>
@@ -66,22 +65,33 @@
                 </div>
                 <hr />
                 <div class='option'> <label><input type="checkbox" id="snapSelectionToWord"></label></div>
-                <div class='option'> <label><input type="checkbox" id="disableWordSnappingOnCtrlKey"></label></div>
-                <div class='option'> <label><input type="checkbox" id="disableWordSnapForCode"></label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="disableWordSnappingOnCtrlKey"></label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="disableWordSnapForCode"></label></div>
                 <!-- <div class='option'> <label><input type="checkbox" id="dontSnapTextfieldSelection"></label></div> -->
-                <div class='option'> <label><input type="text" id="wordSnappingBlacklist"> </label></div>
+                <div class='option child-option'> <label><input type="text" id="wordSnappingBlacklist"> </label></div>
                 <hr />
                 <div class='option'> <label><input type="checkbox" id="changeTextSelectionColor"></label></div>
-                <div class='option'> <label><input type="color" id="textSelectionBackground"></label></div>
-                <div class='option'> <label><input type="color" id="textSelectionColor"></label></div>
-                <div class='option'> <label><input type="number" min="0.0" max='1.0' step='0.1' id="textSelectionBackgroundOpacity"></label></div>
-                <div class='option'> <label><input type="checkbox" id="shouldOverrideWebsiteSelectionColor"></label>
+                <div class='option child-option'> <label><input type="color" id="textSelectionBackground"></label></div>
+                <div class='option child-option'> <label><input type="color" id="textSelectionColor"></label></div>
+                <div class='option child-option'> <label><input type="number" min="0.0" max='1.0' step='0.1' id="textSelectionBackgroundOpacity"></label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="shouldOverrideWebsiteSelectionColor"></label>
                 </div>
             </div>
 
             <!-- Behavior -->
             <h3 class='collapsible-header' id='behaviorHeader'><img class="header-icon" src="./icons/settings.svg"></img></h3>
             <div class='collapsible-content'>
+                <div class='option'> <label><input type="checkbox" id="enableMultiCopyStack"> </label></div>
+                <div class='option child-option'>
+                    <label>
+                        <select id="multiCopySeparator">
+                            <option value="doubleNewline">Double new line</option>
+                            <option value="newline">New line</option>
+                            <option value="comma">Comma</option>
+                        </select>
+                    </label>
+                </div>
+                <hr />
                 <div class='option'><label><select id="tooltipRevealEffect">
                             <option value="noTooltipEffect">No effect</option>
                             <option value="moveUpTooltipEffect">Move up</option>
@@ -99,16 +109,16 @@
                         </select>
                     </label>
                 </div>
+                <div class='option child-option'> <label><input type="checkbox" id="hideTooltipWhenCursorMovesAway"></label></div>
                 <hr />
                 <div class='option'> <label><input type="checkbox" id="hideTooltipOnActionButtonClick"></label></div>
                 <div class='option'> <label><input type="checkbox" id="hideOnKeypress"></label></div>
                 <div class='option'> <label><input type="checkbox" id="hideTooltipOnContextMenuOpen"></label></div>
-                <div class='option'> <label><input type="checkbox" id="hideTooltipWhenCursorMovesAway"></label></div>
                 <!-- <div class='option'> <label><input type="checkbox" id="middleClickHidesTooltip"></label></div> -->
                 <!-- <div class='option'> <label><input type="checkbox" id="leftClickBackgroundTab"></label></div> -->
                 <div class='option'> <label><input type="checkbox" id="draggableTooltip"></label></div>
                 <div class='option'> <label><input type="checkbox" id="recreateTooltipAfterScroll"></label></div>
-                <div class='option'> <label><input type="checkbox" id="floatingOffscreenTooltip"></label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="floatingOffscreenTooltip"></label></div>
                 <!-- <div class='option'> <label><input type="checkbox" id="shiftTooltipWhenWebsiteHasOwn"></label></div> -->
                 <hr />
                 <div class='option'> <label><input type="number" min='50' step='50' id="delayToRevealHoverPanels"></label></div>
@@ -117,9 +127,9 @@
                 <div class='option'> <label><input type="checkbox" id="showStatsOnCopyButtonHover"> </label></div>
                 <hr />
                 <div class='option'> <label><input type="checkbox" id="collapseButtons"> </label></div>
-                <div class='option'> <label><input type="number" min='2' max='8' id="maxTooltipButtonsToShow"> </label></div>
-                <div class='option'> <label><input type="checkbox" id="correctTooltipPositionByMoreButtonWidth"> </label></div>
-                <div class='option'> <label><input type="checkbox" id="collapseAsSecondPanel"> </label></div>
+                <div class='option child-option'> <label><input type="number" min='2' max='8' id="maxTooltipButtonsToShow"> </label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="correctTooltipPositionByMoreButtonWidth"> </label></div>
+                <div class='option child-option'> <label><input type="checkbox" id="collapseAsSecondPanel"> </label></div>
             </div>
 
             <!-- Buttons -->
@@ -172,7 +182,7 @@
                 </div>
                 <!-- <hr /> -->
                 <div class='option'> <label><input type="checkbox" id="showOnMapButtonEnabled"> </label></div>
-                <div class='option'><label><select id="preferredMapsService">
+                <div class='option child-option'><label><select id="preferredMapsService">
                             <option value="google">Google Maps</option>
                             <option value="waze">Waze</option>
                             <option value="mapquest">Mapquest</option>
@@ -199,15 +209,15 @@
             <h3 class='collapsible-header' id='convertionHeader'><img class="header-icon" src="./icons/sync.svg"></img></h3>
             <div class='collapsible-content'>
                 <div class='option'> <label><input type="checkbox" id="convertCurrencies"> </label></div>
-                <div class='option'> <label><input type="checkbox" id="preferCurrencySymbol"> </label></div>
-                <div class='option'><label><select id="convertToCurrencyDropdown">
+                <div class='option child-option'> <label><input type="checkbox" id="preferCurrencySymbol"> </label></div>
+                <div class='option child-option'><label><select id="convertToCurrencyDropdown">
                         </select>
                     </label>
                 </div>
-                <div class='option'> <label><input type="number" min="7" max='359' step='1' id="updateRatesEveryDays"></label></div>
+                <div class='option child-option'> <label><input type="number" min="7" max='359' step='1' id="updateRatesEveryDays"></label></div>
                 <hr />
                 <div class='option'> <label><input type="checkbox" id="convertMetrics"> </label></div>
-                <div class='option'><label><select id="preferredMetricsSystem">
+                <div class='option child-option'><label><select id="preferredMetricsSystem">
                             <option value="metric">metric</option>
                             <option value="imperial">imperial</option>
                         </select>
@@ -242,16 +252,16 @@
 
                 <div id="hoverSearchPanelOptions">
                     <div class='option'> <label><input type="checkbox" id="secondaryTooltipEnabled"></label></div>
-                    <div class='option'> <label><input type="number" min='0' max='50' step='1' id="secondaryTooltipIconSize"></label></div>
-                    <div class='option'><label><select id="secondaryTooltipLayout">
+                    <div class='option child-option'> <label><input type="number" min='0' max='50' step='1' id="secondaryTooltipIconSize"></label></div>
+                    <div class='option child-option'><label><select id="secondaryTooltipLayout">
                                 <option value="verticalLayout">Vertical</option>
                                 <option value="horizontalLayout">Horizontal</option>
                             </select>
                         </label>
                     </div>
-                    <div class='option'> <label><input type="checkbox" id="showSecondaryTooltipTitleOnHover"></label>
+                    <div class='option child-option'> <label><input type="checkbox" id="showSecondaryTooltipTitleOnHover"></label>
                     </div>
-                    <div class='option'> <label><input type="number" min='1' max='10' step='1' id="maxIconsInRow"></label>
+                    <div class='option child-option'> <label><input type="number" min='1' max='10' step='1' id="maxIconsInRow"></label>
                     </div>
                 </div>
 
@@ -261,16 +271,15 @@
                 <div id='customSearchButtonsContainer'></div>
                 <br />
             </div>
-        </div>
 
         <!-- Text fields -->
         <h3 class='collapsible-header' id='textFieldsHeader'><img class="header-icon" src="./icons/text-field.svg"></img></h3>
         <div class='collapsible-content'>
             <div class='option'> <label><input type="checkbox" id="addActionButtonsForTextFields"> </label></div>
-            <div class='option'> <label><input type="checkbox" id="addFontFormatButtons"> </label></div>
-            <div class='option'> <label><input type="checkbox" id="addPasteButton"> </label></div>
-            <div class='option'> <label><input type="checkbox" id="addPasteOnlyEmptyField"> </label></div>
-            <div class='option'> <label><input type="checkbox" id="addClearButton"> </label></div>
+            <div class='option child-option'> <label><input type="checkbox" id="addFontFormatButtons"> </label></div>
+            <div class='option child-option'> <label><input type="checkbox" id="addPasteButton"> </label></div>
+            <div class='option child-option' style="margin-left: 48px !important;"> <label><input type="checkbox" id="addPasteOnlyEmptyField"> </label></div>
+            <div class='option child-option'> <label><input type="checkbox" id="addClearButton"> </label></div>
         </div>
 
 
@@ -309,6 +318,7 @@
         <!-- Debug mode toggle -->
         <div class='option'> <label><input type="checkbox" id="debugMode"></label></div>
         <br />
+        </div>
 
         <!-- Footer buttons -->
         <div id='footer-buttons'>

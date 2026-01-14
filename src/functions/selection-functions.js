@@ -169,6 +169,73 @@ function snapSelectionByWords(sel) {
         }
 
         if (shouldUntrimLastCh) sel.modify("extend", direction[1], "character");
+
+        /// Bi-Directional Symmetry Snapper
+        try {
+            const selStr = sel.toString();
+            const pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
+            const reversePairs = { ')': '(', ']': '[', '}': '{', '"': '"', "'": "'" };
+
+            /// Forward Snap (Unmatched Opener)
+            let openStack = [];
+            for (const char of selStr) {
+                if (['(', '[', '{'].includes(char)) openStack.push(char);
+                else if ([')', ']', '}'].includes(char)) {
+                    if (openStack.length > 0 && pairs[openStack[openStack.length - 1]] === char) openStack.pop();
+                }
+            }
+            let unmatchedOpener = openStack.length > 0 ? openStack[openStack.length - 1] : null;
+            if (!unmatchedOpener) {
+                if ((selStr.match(/"/g) || []).length % 2 !== 0) unmatchedOpener = '"';
+                else if ((selStr.match(/'/g) || []).length % 2 !== 0) unmatchedOpener = "'";
+            }
+
+            /// Backward Snap (Unmatched Closer)
+            let closeStack = [];
+            for (let i = selStr.length - 1; i >= 0; i--) {
+                const char = selStr[i];
+                if ([')', ']', '}'].includes(char)) closeStack.push(char);
+                else if (['(', '[', '{'].includes(char)) {
+                    if (closeStack.length > 0 && reversePairs[closeStack[closeStack.length - 1]] === char) closeStack.pop();
+                }
+            }
+            let unmatchedCloser = closeStack.length > 0 ? closeStack[closeStack.length - 1] : null;
+            if (!unmatchedCloser) {
+                if ((selStr.match(/"/g) || []).length % 2 !== 0) unmatchedCloser = '"';
+                else if ((selStr.match(/'/g) || []).length % 2 !== 0) unmatchedCloser = "'";
+            }
+
+            if (unmatchedOpener || unmatchedCloser) {
+                const range = sel.getRangeAt(0);
+                let startNode = range.startContainer, startOffset = range.startOffset;
+                let endNode = range.endContainer, endOffset = range.endOffset;
+                let modified = false;
+
+                if (unmatchedOpener) {
+                    sel.collapse(endNode, endOffset);
+                    sel.modify("extend", "forward", "character");
+                    if (sel.toString() === pairs[unmatchedOpener]) {
+                        endNode = sel.focusNode; endOffset = sel.focusOffset;
+                        modified = true;
+                    }
+                }
+
+                if (unmatchedCloser) {
+                    sel.collapse(startNode, startOffset);
+                    sel.modify("extend", "backward", "character");
+                    if (sel.toString() === reversePairs[unmatchedCloser]) {
+                        startNode = sel.focusNode; startOffset = sel.focusOffset;
+                        modified = true;
+                    }
+                }
+
+                const newRange = document.createRange();
+                newRange.setStart(startNode, startOffset);
+                newRange.setEnd(endNode, endOffset);
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+            }
+        } catch (e) { if (configs.debugMode) console.log('Symmetry Snapper error: ' + e); }
     }
 }
 
@@ -478,23 +545,82 @@ function selectionChangeListener(e) {
 function extendSelectionToParentEl(){
     /// Extends text selection one level up in the elements hierarchy
 
-    const s = selection ?? window.getSelection(), range = document.createRange();
-    const prevSelection = s.toString().trim();
-    const parentNode = s.anchorNode !== s.focusNode ? s.anchorNode.parentNode.parentNode : s.anchorNode.parentNode;
-    range.selectNodeContents(parentNode);
-    setTimeout(function(){
-        s.removeAllRanges();
-        s.addRange(range);
+    const sel = window.getSelection();
+    if (!sel.rangeCount) return;
 
-        const newSelection = s.toString().trim();
-        if (prevSelection === newSelection && extendParentSelectionCounter < 5) {
-            if (configs.debugMode) console.log('Selection has not changed! Attempting one more time: ' + extendParentSelectionCounter);
-            extendParentSelectionCounter += 1;
-            extendSelectionToParentEl();
-        } else {
-            if (configs.debugMode) console.log('Finished extending text selection');
-            extendParentSelectionCounter = 0;
+    const range = sel.getRangeAt(0);
+    let container = range.commonAncestorContainer;
+
+    /// If we are in a text node, move up to the element
+    if (container.nodeType === 3) {
+        container = container.parentNode;
+    }
+
+    /// Create a range representing the container's full content
+    const containerRange = document.createRange();
+    containerRange.selectNodeContents(container);
+
+    /// Check if the current selection is effectively the same as the container's content
+    const isContainerSelected = (
+        range.compareBoundaryPoints(Range.START_TO_START, containerRange) <= 0 &&
+        range.compareBoundaryPoints(Range.END_TO_END, containerRange) >= 0
+    );
+
+    let targetNode = container;
+    if (isContainerSelected) {
+        /// If already selected, go up one level
+        if (targetNode.parentNode && targetNode.parentNode !== document.body && targetNode.parentNode.nodeType === 1) {
+            targetNode = targetNode.parentNode;
         }
-    }, 0)
+    }
+
+    // Remove listener to prevent it from hiding the tooltip and clearing 'selection' var
+    document.removeEventListener("selectionchange", selectionChangeListener);
+
+    const newRange = document.createRange();
+    newRange.selectNodeContents(targetNode);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+    
+    // Update global variable
+    selection = sel;
+
+    /// Recreate tooltip
+    setTimeout(function() {
+        if (typeof createTooltip === 'function' && lastMouseUpEvent) {
+            createTooltip(lastMouseUpEvent, true);
+        }
+    }, 10);
 }
-let extendParentSelectionCounter = 0;
+
+function sanitizeText(text) {
+    if (!text) return text;
+
+    /// 1. Invisible characters (Zero-width space, Soft hyphen, BOM)
+    text = text.replace(/[\u200B\u00AD\uFEFF]/g, '');
+
+    /// 2. URL Cleanup
+    if (text.match(/^https?:\/\//) || text.match(/^www\./)) {
+        try {
+            let urlObj = new URL(text.startsWith('www.') ? 'http://' + text : text);
+            const paramsToRemove = ['fbclid', 'gclid', 'msclkid'];
+            const keys = Array.from(urlObj.searchParams.keys());
+            
+            keys.forEach(key => {
+                if (paramsToRemove.includes(key) || key.startsWith('utm_')) {
+                    urlObj.searchParams.delete(key);
+                }
+            });
+            text = urlObj.toString();
+        } catch (e) {
+             const regex = new RegExp(`([?&])(utm_[^&=]*|fbclid|gclid|msclkid)=[^&]*`, 'gi');
+             text = text.replace(regex, '');
+             text = text.replace(/[?&]$/, '').replace(/\?&/, '?').replace(/&&/, '&');
+        }
+    }
+
+    /// 3. Normalization (Non-breaking spaces to space, trim)
+    text = text.replace(/\u00A0/g, ' ').trim();
+
+    return text;
+}

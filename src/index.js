@@ -11,6 +11,8 @@ function initConfigs(callback) {
       configs.shouldOverrideWebsiteSelectionColor = loadedConfigs.shouldOverrideWebsiteSelectionColor ?? false;
       configs.enabled = loadedConfigs.enabled ?? true;
       configs.ratesLastFetchedDate = loadedConfigs.ratesLastFetchedDate;
+      configs.enableMultiCopyStack = loadedConfigs.enableMultiCopyStack ?? true;
+      configs.multiCopySeparator = loadedConfigs.multiCopySeparator || 'doubleNewline';
 
       /// Check for domain to be in black list
       configs.excludedDomains = loadedConfigs.excludedDomains || '';
@@ -240,7 +242,7 @@ function initMouseListeners() {
 
       /// Get page selection
       selection = window.getSelection();
-      selectedText = selection.toString().trim();
+      selectedText = sanitizeText(selection.toString());
 
       /// Fix for recreating tooltip when clicked on <a> link with active text selection on the screen
       try {
@@ -331,7 +333,7 @@ function initMouseListeners() {
       if (selectedText == '' && navigator.userAgent.indexOf("Firefox") > -1) {
         const ta = document.querySelector(':focus');
         if (ta != null && ta.value != undefined) {
-          selectedText = ta.value.substring(ta.selectionStart, ta.selectionEnd);
+          selectedText = sanitizeText(ta.value.substring(ta.selectionStart, ta.selectionEnd));
           selection = ta.value.substring(ta.selectionStart, ta.selectionEnd);
         }
       }
@@ -484,7 +486,7 @@ function recreateTooltip() {
 
   timerToRecreateOverlays = setTimeout(function () {
     selection = window.getSelection();
-    selectedText = selection.toString().trim();
+    selectedText = sanitizeText(selection.toString());
 
     if (selection && selectedText.length > 0) {
       createTooltip(lastMouseUpEvent, true);

@@ -4,12 +4,13 @@ body {
 }
 
 .option {
-  padding: 4px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 2px;
 }
 
 .option:hover {
-  background-color: rgb(0, 0, 0, 0.1);
-  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.05);
   transition: all 200ms ease-in-out;
 }
 
@@ -31,12 +32,91 @@ hr {
   margin-right: 6px;
 }
 
+/* Modern Inputs and Selects */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 6px 10px;
+  border: 1px solid #d1d1d1;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #338FFF;
+  box-shadow: 0 0 0 2px rgba(51, 143, 255, 0.2);
+}
+
+/* Modern Toggle Switch Style */
+.option input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 34px;
+  height: 18px;
+  background: #d1d1d1;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease-in-out;
+  vertical-align: middle;
+  margin-right: 12px;
+  border: none;
+  max-width: unset; /* Override default input width */
+  flex-shrink: 0;
+  top: -1px;
+}
+
+.option input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.option input[type="checkbox"]:checked {
+  background: #338FFF; /* SelectON Blue */
+}
+
+.option input[type="checkbox"]:checked::after {
+  transform: translateX(16px);
+}
+
 .option select {
   margin-right: 6px;
 }
 
-input[type="checkbox"]  {
+/* Modern Buttons */
+button {
+  background-color: #338FFF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background-color: #2674d6;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 .disabled-option {
@@ -70,11 +150,23 @@ h4 {
   font-weight: 500;
 }
 
+/* Specific overrides for small icon buttons */
+.custom-search-option-move-button {
+  background-color: transparent;
+  color: #555;
+  border: 1px solid #d1d1d1;
+  padding: 4px;
+}
+
+.custom-search-option-move-button:hover {
+  background-color: #eee;
+  color: #333;
+}
+
 #footer-buttons button {
   margin: 3px !important;
   width: 100%;
   text-align: center;
-  cursor: pointer;
 }
 
 #customSearchButtonsContainer {
@@ -83,21 +175,21 @@ h4 {
 
 select {
   margin: 5px 0px;
-  cursor: pointer;
 }
 
 /* Collapsible settings headers */
 /* Style the button that is used to open and close the collapsible content */
 .collapsible-header {
-  background-color: #eee;
+  background-color: #f7f7f7;
   color: #444;
   cursor: pointer;
   padding: 18px 6px 18px 40px;
-  border: none;
+  border: 1px solid #e0e0e0;
   text-align: left;
   outline: none;
-  font-size: 15px;
-  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
   position: relative;
 
   margin: 12px 0px;
@@ -105,7 +197,7 @@ select {
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .active, .collapsible-header:hover {
-  background-color: #ccc;
+  background-color: #eeeeee;
 }
 
 /* Style the collapsible content. Note: hidden by default */
@@ -114,7 +206,8 @@ select {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
-  border-left: 1px solid lightgray;
+  border-left: 2px solid #e0e0e0;
+  margin-left: 12px;
 }
 
 #selecton-version {
@@ -300,20 +393,45 @@ a:not(:hover) {
     }
 
     .collapsible-header {
-      background-color: rgba(238, 238, 238, 0.528);
+      background-color: rgba(255, 255, 255, 0.05);
       color: white;
+      border-color: #444;
     }
 
     .collapsible-header:hover {
-      background-color: rgba(204, 204, 204, 0.503);
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     .collapsible-content {
-      border-left: 1px solid gray;
+      border-left: 2px solid #555;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        background-color: #3a3b3e;
+        border-color: #555;
+        color: white;
+    }
+    
+    .custom-search-option-move-button {
+        color: #ddd;
+        border-color: #555;
+    }
+    
+    .custom-search-option-move-button:hover {
+        background-color: #444;
     }
 
     .option:hover {
       background-color: rgb(256, 256, 256, 0.1);
+    }
+
+    .option input[type="checkbox"] {
+      background: #555;
+    }
+    .option input[type="checkbox"]:checked {
+      background: #338FFF;
     }
 
     .header-icon {
@@ -328,4 +446,87 @@ a:not(:hover) {
     hr {
       color: lightgray;
     }
+
+    .stepper-btn {
+      background-color: #3a3b3e;
+      border-color: #555;
+      color: white;
+    }
+    
+    .stepper-btn:hover {
+      background-color: #444;
+    }
+
+    .slider-value {
+      color: #ddd;
+    }
  }
+
+/* --- New Inputs Implementation --- */
+
+/* Sliders */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.slider-container input[type=range] {
+  flex-grow: 1;
+  margin: 0;
+  cursor: pointer;
+}
+
+.slider-value {
+  min-width: 35px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #555;
+  font-size: 13px;
+}
+
+/* Steppers */
+.stepper-container {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.stepper-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #d1d1d1;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.stepper-btn:hover {
+  background: #e0e0e0;
+}
+
+.stepper-input {
+  width: 40px !important;
+  text-align: center;
+  margin: 0 4px !important;
+  -moz-appearance: textfield;
+  padding: 5px !important;
+}
+
+.stepper-input::-webkit-outer-spin-button,
+.stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.child-option {
+  margin-left: 28px !important;
+  border-left: 2px solid rgba(128, 128, 128, 0.2);
+}

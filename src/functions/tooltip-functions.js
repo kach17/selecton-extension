@@ -268,6 +268,91 @@ function addBasicTooltipButton(label, icon, onClick, isFirstButton = false, icon
 
     tooltip.appendChild(button);
 
+    /// Multi-Copy Stack Logic
+    if (configs.enableMultiCopyStack && label === copyLabel) {
+        /// 2. Create Append Button
+        const appendBtn = document.createElement('button');
+        appendBtn.className = 'selection-popup-button';
+        appendBtn.style.cssText = 'padding: 0 8px; font-weight: bold; border-left: 1px solid var(--selecton-outline-color);';
+        appendBtn.innerHTML = '+';
+        appendBtn.title = chrome.i18n.getMessage('appendCopyLabel') || 'Append to copy stack';
+
+        /// 3. Add Badge to Append Button (Moved from Copy button)
+        appendBtn.style.position = 'relative';
+        const badge = document.createElement('span');
+        badge.className = 'selecton-badge';
+        badge.style.cssText = 'position: absolute; top: 2px; right: 2px; background: #ff4d4d; color: white; font-size: 8px; padding: 1px 3px; border-radius: 4px; line-height: 1; pointer-events: none; display: none; z-index: 10;';
+        appendBtn.appendChild(badge);
+
+        appendBtn.onmousedown = function(e){ e.stopPropagation(); e.preventDefault(); }
+        appendBtn.onmouseup = function(e){
+            if (e.button == 0){
+                e.stopPropagation();
+                const textToAppend = selectedText; 
+
+                chrome.storage.local.get(['copyStack'], function(result) {
+                    const stack = result.copyStack || [];
+                    stack.push(textToAppend);
+                    chrome.storage.local.set({copyStack: stack});
+
+                    let sep = '\n\n';
+                    if (configs.multiCopySeparator === 'newline') sep = '\n';
+                    else if (configs.multiCopySeparator === 'comma') sep = ', ';
+
+                    copyManuallyToClipboard(stack.join(sep));
+
+                    if (badge) {
+                        badge.textContent = stack.length;
+                        badge.style.display = stack.length > 1 ? 'block' : 'none';
+                    }
+                    
+                    if (configs.hideTooltipOnActionButtonClick) { hideDragHandles(); hideTooltip(); }
+                    removeSelectionOnPage();
+                });
+            }
+        }
+
+        /// Add Hover Panel with Clear button
+        const clearStackBtn = document.createElement('button');
+        clearStackBtn.className = 'selection-popup-button';
+        clearStackBtn.style.cssText = 'display: block; width: 100%; text-align: left; padding: 6px 12px; white-space: nowrap; min-width: max-content; border: none; background: transparent;';
+        clearStackBtn.innerText = chrome.i18n.getMessage('clearLabel') || 'Clear';
+        
+        clearStackBtn.onmousedown = function(e){ e.stopPropagation(); e.preventDefault(); }
+        clearStackBtn.onmouseup = function(e){
+             if (e.button == 0) {
+                 e.stopPropagation();
+                 chrome.storage.local.remove('copyStack');
+                 if (badge) badge.style.display = 'none';
+             }
+        }
+
+        const panel = createHoverPanelForButton(appendBtn, '', null, false, true);
+        panel.classList.add('no-padding-tooltip');
+        panel.style.overflow = 'hidden';
+        panel.appendChild(clearStackBtn);
+        appendBtn.appendChild(panel);
+
+        tooltip.appendChild(appendBtn);
+
+        /// 1. Intercept the original click to clear stack on regular copy
+        const originalOnClick = button.onmouseup;
+        button.onmouseup = function(e) {
+             if (e.button == 0) {
+                 chrome.storage.local.remove('copyStack');
+                 if (badge) badge.style.display = 'none';
+             }
+             if (originalOnClick) originalOnClick.call(this, e);
+        };
+
+        chrome.storage.local.get(['copyStack'], function(result) { 
+            if (result.copyStack && result.copyStack.length > 1) { 
+                badge.textContent = result.copyStack.length; 
+                badge.style.display = 'block'; 
+            } 
+        });
+    }
+
     return button;
 }
 

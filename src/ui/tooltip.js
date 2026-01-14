@@ -79,7 +79,7 @@ function createTooltip(e, recreated = false) {
         /// Check text selection again
         /// Fix for recreating tooltip when clicked inside selected area (noticed only in Firefox)
         selection = window.getSelection();
-        selectedText = selection.toString().trim();
+        selectedText = sanitizeText(selection.toString());
 
         if (selectedText == '') {
             hideDragHandles();
@@ -121,10 +121,19 @@ function createTooltip(e, recreated = false) {
     }, 0);
 }
 
+let cachedTooltip = null;
+let cachedArrow = null;
+
 function setUpTooltip(recreated = false) {
 
     /// Create tooltip and it's arrow
-    tooltip = document.createElement('div');
+    if (cachedTooltip) {
+        tooltip = cachedTooltip;
+        tooltip.innerHTML = ''; /// Clear previous buttons
+    } else {
+        tooltip = document.createElement('div');
+        cachedTooltip = tooltip;
+    }
     tooltip.className = 'selecton-tooltip selecton-entity';
     if (configs.verticalLayoutTooltip) {
         tooltip.classList.add('vertical-layout-tooltip');
@@ -164,7 +173,12 @@ function setUpTooltip(recreated = false) {
     }
 
     /// Add tooltip arrow
-    arrow = document.createElement('div');
+    if (cachedArrow) {
+        arrow = cachedArrow;
+    } else {
+        arrow = document.createElement('div');
+        cachedArrow = arrow;
+    }
     if (configs.showTooltipArrow) arrow.setAttribute('class', 'selecton-tooltip-arrow');
     tooltip.appendChild(arrow);
 
@@ -360,33 +374,20 @@ function hideTooltip(animated = true) {
         console.log('Checking for existing tooltips...');
     }
 
-    /// Hide all tooltips
-    if (!oldTooltips) oldTooltips = document.getElementsByClassName('selecton-entity');
-
-    if (oldTooltips && oldTooltips.length) {
+    /// Hide tooltip (Singleton pattern)
+    if (tooltip) {
         tooltipIsShown = false;
-
-        if (configs.debugMode)
-            console.log(`Found ${oldTooltips.length} tooltips to hide`);
-
-        for (let i = 0, l = oldTooltips.length; i < l; i++) {
-            const oldTooltip = oldTooltips[i];
-            if (!animated)
-                oldTooltip.style.transition = '';
-            oldTooltip.style.opacity = 0.0;
-            oldTooltip.style.pointerEvents = 'none';
-
-            setTimeout(function () {
-                oldTooltip.remove();
-            }, animated ? configs.animationDuration : 0);
-        }
+        if (!animated) tooltip.style.transition = '';
+        tooltip.style.opacity = 0.0;
+        tooltip.style.pointerEvents = 'none';
+        
+        /// Do not remove from DOM, just hide to recycle
     } else {
         if (configs.debugMode)
             console.log('No existing tooltips found');
     }
 
-    tooltip.style.pointerEvents = 'none';
-    tooltip = null;
+    // tooltip = null; /// Keep reference for reuse
     secondaryTooltip = null;
     timerToRecreateOverlays = null;
     isTextFieldFocused = false;

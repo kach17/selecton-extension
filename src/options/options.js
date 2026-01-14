@@ -8,9 +8,7 @@ const expandedSettingsSections = [];
 let exportFileName = 'selecton-settings.json';
 var keys = Object.keys(configs);
 let markersData;
-
 function loadSettings() {
-
     /// Load expanded sections list
     chrome.storage.local.get(['expandedSettingsSections'], function (val) {
         if (val.expandedSettingsSections !== null && val.expandedSettingsSections !== undefined)
@@ -28,7 +26,6 @@ function loadSettings() {
 
     isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     if (isSafari) {
-        document.querySelector("#donateButton").style.display = 'none';
         document.querySelector("#showUpdateNotification").parentNode.parentNode.style.display = 'none';
     }
 
@@ -50,7 +47,6 @@ function setInputs(result) {
     userConfigs = result;
 
     keys.forEach(function (key) {
-        // let input = document.querySelector('#' + key.toString());
         let input = document.getElementById(key.toString());
 
         /// Set input value
@@ -101,19 +97,6 @@ function setInputs(result) {
         }
     });
 
-    /// Set event listeners
-    // var inputs = document.querySelectorAll(ids.join(','));
-    // inputs.forEach(function (input) {
-    //     input.addEventListener("input", function (e) {
-    //         let id = input.getAttribute('id');
-    //         let inputValue = input.getAttribute('type') == 'checkbox' ? input.checked : input.value;
-    //         userConfigs[id] = inputValue;
-
-    //         saveAllSettings();
-    //         updateDisabledOptions();
-    //     });
-    // });
-
     /// Set custom style for 'Excluded domains' textfields
     var excludedDomainsTextfields = document.querySelectorAll("#excludedDomains, #wordSnappingBlacklist");
     excludedDomainsTextfields.forEach(function (excludedDomainsTextfield) {
@@ -126,6 +109,8 @@ function setInputs(result) {
     updateDisabledOptions();
 
     setCurrenciesDropdown();
+
+    enhanceUiInputs();
 
     setTimeout(function () {
         loadCustomSearchButtons();
@@ -269,15 +254,6 @@ function setTranslatedLabels() {
         k.parentNode.innerHTML = k.parentNode.innerHTML.replaceAll('CTRL', '⌘cmd');
     }
 
-    // try {
-    //     const span = document.createElement('span');
-    //     span.style.opacity = 0.5;
-    //     span.id = 'applyConfigsImmediatelyPerformanceTip';
-    //     const disableForBetterPerformanceLabel = chrome.i18n.getMessage("disableForBetterPerformance");
-    //     span.innerHTML = '<br/>' + disableForBetterPerformanceLabel[0].toLowerCase() + disableForBetterPerformanceLabel.substring(1, disableForBetterPerformanceLabel.length);
-    //     document.querySelector("#applyConfigsImmediately").parentNode.appendChild(span);
-    // } catch (e) { }
-
     /// "All changes saved automatically" block
     let hintEl = document.querySelector("#allChangesSavedAutomaticallyHeader");
     hintEl.innerHTML = chrome.i18n.getMessage("allChangesSavedAutomatically");
@@ -285,9 +261,9 @@ function setTranslatedLabels() {
     hintEl.innerHTML += chrome.i18n.getMessage("updatePageToSeeChanges");
 
     /// Translate footer buttons
-    document.querySelector("#writeAReviewButton").innerHTML = chrome.i18n.getMessage("writeAReview") + document.querySelector("#writeAReviewButton").innerHTML;
     document.querySelector("#githubButton").innerHTML = chrome.i18n.getMessage("visitGithub") + document.querySelector("#githubButton").innerHTML;
-    document.querySelector("#donateButton").innerHTML = chrome.i18n.getMessage("buyMeCoffee") + document.querySelector("#donateButton").innerHTML;
+    document.querySelector("#writeAReviewButton").style.display = 'none';
+    document.querySelector("#donateButton").style.display = 'none';
 
     document.querySelector("#exportSettings").innerHTML = chrome.i18n.getMessage("export");
     document.querySelector("#importSettingsButton").innerHTML = chrome.i18n.getMessage("import");
@@ -296,68 +272,121 @@ function setTranslatedLabels() {
 function setVersionLabel() {
     let label = document.getElementById('selecton-version');
     var manifestData = chrome.runtime.getManifest();
-    label.innerHTML = 'Selecton ' + manifestData.version + ` (<a target='_blank' href='https://github.com/emvaized/selecton-extension/blob/master/CHANGELOG.md'>${chrome.i18n.getMessage("whatsNew") ?? "What's new"}</a>)`;
+    label.innerHTML = 'Selecton ' + manifestData.version + ` (<a target='_blank' href='https://github.com/kach17/selecton-extension/blob/master/CHANGELOG.md'>${chrome.i18n.getMessage("whatsNew") ?? "What's new"}</a>)`;
 }
 
 function updateDisabledOptions() {
     /// Grey out unavailable optoins
-    document.getElementById("all-options-container").className = document.getElementById("enabled").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("convertToCurrencyDropdown").parentNode.className = document.getElementById("convertCurrencies").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("preferredMetricsSystem").parentNode.className = document.getElementById("convertMetrics").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("languageToTranslate").parentNode.className = document.getElementById("showTranslateButton").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("customStylesSection").className = document.getElementById("useCustomStyle").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("fullOpacityOnHover").parentNode.className = document.getElementById("tooltipOpacity").value < 1.0 ? 'enabled-option' : 'disabled-option';
-    document.getElementById("shadowOpacity").parentNode.className = document.getElementById("addTooltipShadow").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("textSelectionBackground").parentNode.className = document.getElementById("changeTextSelectionColor").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("textSelectionColor").parentNode.className = document.getElementById("changeTextSelectionColor").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("textSelectionBackgroundOpacity").parentNode.className = document.getElementById("changeTextSelectionColor").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("shouldOverrideWebsiteSelectionColor").parentNode.className = document.getElementById("changeTextSelectionColor").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("preferredNewEmailMethod").parentNode.className = document.getElementById("showEmailButton").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("preferredMapsService").parentNode.className = document.getElementById("showOnMapButtonEnabled").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("secondaryTooltipIconSize").parentNode.className = document.getElementById("secondaryTooltipEnabled").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("showSecondaryTooltipTitleOnHover").parentNode.className = document.getElementById("secondaryTooltipEnabled").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("preferCurrencySymbol").parentNode.className = document.getElementById("convertCurrencies").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("disableWordSnappingOnCtrlKey").parentNode.className = document.getElementById("snapSelectionToWord").checked ? 'enabled-option' : 'disabled-option';
-    // document.getElementById("dontSnapTextfieldSelection").parentNode.className = document.getElementById("snapSelectionToWord").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("secondaryTooltipLayout").parentNode.className = document.getElementById("secondaryTooltipEnabled").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("wordSnappingBlacklist").parentNode.className = document.getElementById("snapSelectionToWord").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("disableWordSnapForCode").parentNode.className = document.getElementById("snapSelectionToWord").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("addPasteOnlyEmptyField").parentNode.className = document.getElementById("addPasteButton").checked && document.getElementById("addActionButtonsForTextFields").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("addFontFormatButtons").parentNode.className = document.getElementById("addActionButtonsForTextFields").checked ? 'enabled-option' : 'disabled-option';
-    // document.getElementById("liveTranslation").parentNode.className = document.getElementById("showTranslateButton").checked && document.getElementById("preferredTranslateService").value == 'google' ? 'enabled-option' : 'disabled-option';
-    document.getElementById("liveTranslation").parentNode.className = document.getElementById("showTranslateButton").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("hideTranslateButtonForUserLanguage").parentNode.className = document.getElementById("showTranslateButton").checked ? 'enabled-option' : 'disabled-option';
-    // document.getElementById("delayToRevealTranslateTooltip").parentNode.className = document.getElementById("showTranslateButton").checked && document.getElementById("liveTranslation").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("showTranslateIfLanguageUnknown").parentNode.className = document.getElementById("showTranslateButton").checked && document.getElementById("hideTranslateButtonForUserLanguage").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("addPasteButton").parentNode.className = document.getElementById("addActionButtonsForTextFields").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("updateRatesEveryDays").parentNode.className = document.getElementById("convertCurrencies").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("preferredTranslateService").parentNode.className = document.getElementById("showTranslateButton").checked ? 'enabled-option' : 'disabled-option';
-    // document.getElementById("shiftTooltipWhenWebsiteHasOwn").parentNode.className = document.getElementById("tooltipPosition").value == 'overCursor' ? 'disabled-option' : 'enabled-option';
-    document.getElementById("customSearchButtonsContainer").className = document.getElementById("secondaryTooltipEnabled").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("dictionaryButtonWordsAmount").parentNode.className = document.getElementById("showDictionaryButton").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("dictionaryButtonResponseCharsAmount").parentNode.className = document.getElementById("showDictionaryButton").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("maxTooltipButtonsToShow").parentNode.className = document.getElementById("collapseButtons").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("correctTooltipPositionByMoreButtonWidth").parentNode.className = document.getElementById("collapseButtons").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("correctTooltipPositionByMoreButtonWidth").parentNode.className = document.getElementById("collapseAsSecondPanel").checked ? 'disabled-option' : 'enabled-option';
-    document.getElementById("collapseAsSecondPanel").parentNode.className = document.getElementById("collapseButtons").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("addClearButton").parentNode.className = document.getElementById("addPasteOnlyEmptyField").checked || !document.getElementById("addPasteButton").checked || !document.getElementById("addActionButtonsForTextFields").checked ? 'disabled-option' : 'enabled-option';
-    document.getElementById("hideTooltipWhenCursorMovesAway").parentNode.className = document.getElementById("tooltipPosition").value == 'overCursor' ? 'enabled-option' : 'disabled-option';
-    document.getElementById("dragHandleStyle").parentNode.className = document.getElementById("addDragHandles").checked ? 'enabled-option' : 'disabled-option';
-    document.getElementById("floatingOffscreenTooltip").parentNode.className = document.getElementById("recreateTooltipAfterScroll").checked ? 'enabled-option' : 'disabled-option';
+    document.getElementById("all-options-container").className = document.getElementById("enabled").checked ? 'enabled-option' : 'hidden-option';
 
-    /// Fully hide options unless condition is met
-    document.getElementById("customSearchUrl").parentNode.parentNode.className = document.getElementById("preferredSearchEngine").value == 'custom' ? 'option visible-option' : 'option hidden-option';
-    document.getElementById("showButtonLabelOnHover").parentNode.parentNode.className = document.getElementById("buttonsStyle").value == 'onlyicon' ? 'option visible-option' : 'option hidden-option';
-    document.getElementById("tooltipInvertedBackground").parentNode.parentNode.className = document.getElementById("invertColorOnDarkWebsite").checked ? 'option visible-option' : 'option hidden-option';
-    // document.getElementById("applyConfigsImmediatelyPerformanceTip").className = document.getElementById("applyConfigsImmediately").checked ? 'visible-option' : 'hidden-option';
-    document.getElementById("showSecondaryTooltipTitleOnHover").parentNode.parentNode.className = document.getElementById("secondaryTooltipLayout").value == 'verticalLayout' ? 'hidden-option' : 'option visible-option';
-    document.getElementById("maxIconsInRow").parentNode.parentNode.className = document.getElementById("secondaryTooltipLayout").value == 'verticalLayout' ? 'hidden-option' : 'option visible-option';
-    document.getElementById("hoverSearchPanelOptions").className = document.getElementById("customSearchOptionsDisplay").value == 'panelCustomSearchStyle' ? 'hidden-option' : 'visible-option';
+    const toggle = (id, condition) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        
+        let target = el.closest('.option');
+        if (!target) target = el; // Fallback
+        
+        // Handle containers that are not .option
+        if (target.id === 'customStylesSection' || target.id === 'customSearchButtonsContainer') {
+             target.className = condition ? 'enabled-option' : 'hidden-option';
+             return;
+        }
+
+        if (condition) {
+            target.classList.remove('hidden-option', 'disabled-option');
+            target.classList.add('enabled-option');
+        } else {
+            target.classList.remove('enabled-option');
+            target.classList.add('hidden-option');
+        }
+    };
+
+    toggle("convertToCurrencyDropdown", document.getElementById("convertCurrencies").checked);
+    toggle("preferredMetricsSystem", document.getElementById("convertMetrics").checked);
+    toggle("languageToTranslate", document.getElementById("showTranslateButton").checked);
+    
+    const useCustomStyle = document.getElementById("useCustomStyle").checked;
+    toggle("customStylesSection", useCustomStyle);
+    
+    toggle("fullOpacityOnHover", document.getElementById("tooltipOpacity").value < 1.0);
+    toggle("shadowOpacity", document.getElementById("addTooltipShadow").checked);
+    
+    const changeTextSelectionColor = document.getElementById("changeTextSelectionColor").checked;
+    toggle("textSelectionBackground", changeTextSelectionColor);
+    toggle("textSelectionColor", changeTextSelectionColor);
+    toggle("textSelectionBackgroundOpacity", changeTextSelectionColor);
+    toggle("shouldOverrideWebsiteSelectionColor", changeTextSelectionColor);
+    
+    toggle("preferredNewEmailMethod", document.getElementById("showEmailButton").checked);
+    toggle("preferredMapsService", document.getElementById("showOnMapButtonEnabled").checked);
+    
+    const secondaryTooltipEnabled = document.getElementById("secondaryTooltipEnabled").checked;
+    toggle("secondaryTooltipIconSize", secondaryTooltipEnabled);
+    toggle("secondaryTooltipLayout", secondaryTooltipEnabled);
+    
+    toggle("preferCurrencySymbol", document.getElementById("convertCurrencies").checked);
+    
+    const snapSelectionToWord = document.getElementById("snapSelectionToWord").checked;
+    toggle("disableWordSnappingOnCtrlKey", snapSelectionToWord);
+    toggle("wordSnappingBlacklist", snapSelectionToWord);
+    toggle("disableWordSnapForCode", snapSelectionToWord);
+    
+    const addActionButtonsForTextFields = document.getElementById("addActionButtonsForTextFields").checked;
+    const addPasteButton = document.getElementById("addPasteButton").checked;
+    
+    toggle("addPasteOnlyEmptyField", addPasteButton && addActionButtonsForTextFields);
+    toggle("addFontFormatButtons", addActionButtonsForTextFields);
+    toggle("addPasteButton", addActionButtonsForTextFields);
+    
+    const showTranslateButton = document.getElementById("showTranslateButton").checked;
+    toggle("liveTranslation", showTranslateButton);
+    toggle("hideTranslateButtonForUserLanguage", showTranslateButton);
+    toggle("showTranslateIfLanguageUnknown", showTranslateButton && document.getElementById("hideTranslateButtonForUserLanguage").checked);
+    toggle("preferredTranslateService", showTranslateButton);
+    
+    toggle("updateRatesEveryDays", document.getElementById("convertCurrencies").checked);
+    
+    toggle("customSearchButtonsContainer", secondaryTooltipEnabled);
+    
+    const showDictionaryButton = document.getElementById("showDictionaryButton").checked;
+    toggle("dictionaryButtonWordsAmount", showDictionaryButton);
+    toggle("dictionaryButtonResponseCharsAmount", showDictionaryButton);
+    
+    const collapseButtons = document.getElementById("collapseButtons").checked;
+    toggle("maxTooltipButtonsToShow", collapseButtons);
+    toggle("collapseAsSecondPanel", collapseButtons);
+    toggle("correctTooltipPositionByMoreButtonWidth", collapseButtons && !document.getElementById("collapseAsSecondPanel").checked);
+    
+    const pasteOnlyEmpty = document.getElementById("addPasteOnlyEmptyField").checked;
+    toggle("addClearButton", !pasteOnlyEmpty && addPasteButton && addActionButtonsForTextFields);
+    
+    toggle("hideTooltipWhenCursorMovesAway", document.getElementById("tooltipPosition").value == 'overCursor');
+    toggle("dragHandleStyle", document.getElementById("addDragHandles").checked);
+    toggle("floatingOffscreenTooltip", document.getElementById("recreateTooltipAfterScroll").checked);
+    
+    const addMarkerButton = document.getElementById("addMarkerButton").checked;
+    toggle("maxMarkerPagesToStore", addMarkerButton);
+    toggle("recentMarkersLabel", addMarkerButton);
+    toggle("website-markers-list", addMarkerButton);
+
+    const multiCopyEl = document.getElementById("multiCopySeparator");
+    if (multiCopyEl) toggle("multiCopySeparator", document.getElementById("enableMultiCopyStack").checked);
+
+    toggle("customSearchUrl", document.getElementById("preferredSearchEngine").value == 'custom');
+    toggle("showButtonLabelOnHover", document.getElementById("buttonsStyle").value == 'onlyicon');
+    toggle("tooltipInvertedBackground", document.getElementById("invertColorOnDarkWebsite").checked);
+    
+    const secondaryTooltipLayout = document.getElementById("secondaryTooltipLayout").value;
+    const showTitleCondition = secondaryTooltipEnabled && secondaryTooltipLayout != 'verticalLayout';
+    toggle("showSecondaryTooltipTitleOnHover", showTitleCondition);
+    toggle("maxIconsInRow", showTitleCondition);
+    
+    toggle("hoverSearchPanelOptions", document.getElementById("customSearchOptionsDisplay").value != 'panelCustomSearchStyle');
 
     /// Hide language detection option if current browser doesn't support it
     if (!chrome.i18n.detectLanguage) {
-        document.getElementById('hideTranslateButtonForUserLanguage').parentNode.parentNode.className = 'hidden-option';
-        document.getElementById('showTranslateIfLanguageUnknown').parentNode.parentNode.className = 'hidden-option';
+        toggle("hideTranslateButtonForUserLanguage", false);
+        toggle("showTranslateIfLanguageUnknown", false);
     }
 }
 
@@ -483,7 +512,6 @@ function generateCustomSearchButtonsList() {
         /// Title field
         let title = document.createElement('input');
         title.setAttribute('type', 'text');
-        // title.setAttribute('placeholder', returnDomainFromUrl(item['url']));
         title.setAttribute('placeholder', 'Title');
         title.setAttribute('style', 'margin-left: 3px; min-width: 100px; margin-bottom: 3px; display: inline;');
         title.value = item['title'];
@@ -527,11 +555,6 @@ function generateCustomSearchButtonsList() {
         /// URL field
         let urlInputDiv = document.createElement('div');
 
-        // let urlLabel = document.createElement('label');
-        // urlLabel.setAttribute('class', 'custom-search-option-url-label');
-        // urlLabel.textContent = 'URL ';
-        // urlInputDiv.appendChild(urlLabel);
-
         var urlInput = document.createElement('input');
         urlInput.setAttribute('type', 'text');
         urlInput.setAttribute('placeholder', 'URL');
@@ -551,11 +574,6 @@ function generateCustomSearchButtonsList() {
         if (item['icon'] !== null && item['icon'] !== undefined) {
             var iconInputDiv = document.createElement('div');
 
-            // let iconLabel = document.createElement('span');
-            // iconLabel.setAttribute('style', 'display: inline;opacity: 0.5;');
-            // iconLabel.textContent = 'Icon ';
-            // iconInputDiv.appendChild(iconLabel);
-
             /// Custom icon URL field
             var iconInput = document.createElement('input');
             iconInput.setAttribute('type', 'text');
@@ -571,19 +589,6 @@ function generateCustomSearchButtonsList() {
                 generateCustomSearchButtonsList();
             });
             iconInputDiv.appendChild(iconInput);
-
-            /// Remove custom icon button
-            // var removeCustomIconButton = document.createElement('button');
-            // removeCustomIconButton.textContent = '✕';
-            // removeCustomIconButton.setAttribute('title', chrome.i18n.getMessage("removeCustomIcon"));
-            // removeCustomIconButton.setAttribute('style', ' max-width: 1px !important;  margin: 0px 6px;padding: 1px; align-items: center');
-            // removeCustomIconButton.setAttribute('id', 'useCustomIcon' + i.toString());
-            // removeCustomIconButton.onmouseup = function () {
-            //     customSearchButtonsList[parseInt(this.id.replaceAll('useCustomIcon', ''))]['icon'] = null;
-            //     saveCustomSearchButtons();
-            //     generateCustomSearchButtonsList();
-            // };
-            // iconInputDiv.appendChild(removeCustomIconButton);
 
             entry.appendChild(iconInputDiv);
         }
@@ -679,81 +684,6 @@ function saveExpandedSections() {
 function saveAllSettings() {
     chrome.storage.local.set(userConfigs);
 }
-
-// function resetSettings() {
-//     /// Reset custom search engines
-//     customSearchButtonsList = [
-//         {
-//             'url': 'https://www.youtube.com/results?search_query=%s',
-//             'title': 'YouTube',
-//             'enabled': true
-//         },
-//         {
-//             'url': 'https://open.spotify.com/search/%s',
-//             'title': 'Spotify',
-//             'enabled': true
-//         },
-//         {
-//             'url': 'https://aliexpress.com/wholesale?SearchText=%s',
-//             'title': 'Aliexpress',
-//             'icon': 'https://symbols.getvecta.com/stencil_73/76_aliexpress-icon.a7d3b2e325.png',
-//             'enabled': true
-//         },
-//         {
-//             'url': 'https://www.amazon.com/s?k=%s',
-//             'title': 'Amazon',
-//             'enabled': true
-//         },
-//         {
-//             'url': 'https://wikipedia.org/wiki/SpecialSearch?search=%s',
-//             'title': 'Wikipedia',
-//             'enabled': false
-//         },
-//         {
-//             'url': 'https://www.imdb.com/find?s=alt&q=%s',
-//             'title': 'IMDB',
-//             'enabled': false
-//         },
-//     ];
-//     saveCustomSearchButtons();
-//     setTimeout(function () {
-//         generateCustomSearchButtonsList();
-//     }, 50);
-
-//     /// Reset regular options
-//     var dataToSave = {};
-//     defaultConfigs.forEach(function (value, key) {
-//         dataToSave[key] = value;
-//     });
-
-//     chrome.storage.local.set(dataToSave);
-
-//     defaultConfigs.forEach(function (value, key) {
-//         var input = document.getElementById(key);
-
-//         /// Set input value
-//         if (input !== null && input !== undefined) {
-//             if (input.type == 'checkbox') {
-//                 if ((value !== null && value == true) || (value == null && value == true))
-//                     input.setAttribute('checked', 0);
-//                 else input.removeAttribute('checked', 0);
-//             } else if (input.tagName == 'SELECT') {
-//                 var options = input.querySelectorAll('option');
-//                 if (options !== null)
-//                     options.forEach(function (option) {
-//                         var selectedValue = value;
-//                         if (chrome.i18n.getMessage(option.innerHTML) !== (null || undefined || ''))
-//                             option.innerHTML = chrome.i18n.getMessage(option.innerHTML);
-//                         if (option.value == selectedValue) option.setAttribute('selected', true);
-//                         else option.setAttribute('selected', false);
-//                     });
-//             }
-//             else {
-//                 input.setAttribute('value', value);
-//             }
-//         }
-//     });
-// }
 
 const expandedMarkerSections = [];
 
@@ -884,11 +814,6 @@ function setMarkerSection(value) {
             tile.onclick = function () {
                 /// open page, and scroll to selected marker
 
-                // let w = window.open(url, '_blank');
-                // setTimeout(function () {
-                //     w.postMessage("selecton-scroll-to-marker-message:" + marker.hintDy.toString(), url);
-                // }, 1500);
-
                 chrome.tabs.create({ url: url, active: true }, async tab => {
                     let timeoutToDispatch, isTabLoaded = false, timeout = 5000;
 
@@ -948,57 +873,268 @@ function setMarkerSection(value) {
 
 document.addEventListener("DOMContentLoaded", loadSettings);
 
-document.querySelector("#donateButton").addEventListener("click", function() {
-    window.open('https://github.com/emvaized/emvaized.github.io/wiki/Donate-Page', '_blank');
-});
-
 document.querySelector("#githubButton").addEventListener("click", function() {
-    window.open('https://github.com/emvaized/selecton-extension', '_blank');
-});
-document.querySelector("#writeAReviewButton").addEventListener("click", function() {
-    if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-        window.open('mailto:maximtsyba@gmail.com'); return;
-    }
-
-    let isFirefox = navigator.userAgent.indexOf("Firefox") > -1;
-    window.open(isFirefox ? 'https://addons.mozilla.org/firefox/addon/selection-actions/' : 'https://chrome.google.com/webstore/detail/selecton/pemdbnndbdpbelmfcddaihdihdfmnadi/reviews', '_blank');
+    window.open('https://github.com/kach17/selecton-extension', '_blank');
 });
 
 document.querySelector('#testPageButton').addEventListener('click', function (e) {
     window.open(chrome.runtime.getURL('options/test-page.html'));
 });
 
+function enhanceUiInputs() {
+    // --- 1. Helper Functions ---
 
+    // Helper to replace input with slider
+    const createSlider = (id, min, max, step) => {
+        const input = document.getElementById(id);
+        if (!input || input.dataset.enhanced) return;
+        
+        const container = document.createElement('div');
+        container.className = 'slider-container';
+        
+        const range = document.createElement('input');
+        range.type = 'range';
+        range.min = min;
+        range.max = max;
+        range.step = step;
+        range.value = input.value;
+        
+        const display = document.createElement('span');
+        display.className = 'slider-value';
+        display.textContent = input.value;
+        
+        range.addEventListener('input', () => {
+            input.value = range.value;
+            display.textContent = range.value;
+            input.dispatchEvent(new Event('input'));
+        });
+        
+        input.parentNode.insertBefore(container, input);
+        container.appendChild(range);
+        container.appendChild(display);
+        input.style.display = 'none';
+        input.dataset.enhanced = 'true';
+    };
 
-/// Experiments to add search field
-// document.getElementById('searchOptionsField').addEventListener('input', function (e) {
-//     let allInputs = document.getElementsByClassName('option');
+    // Helper to wrap input in stepper
+    const createStepper = (id, min = 0) => {
+        const input = document.getElementById(id);
+        if (!input || input.dataset.enhanced) return;
 
-//     for (let i = 0, l = allInputs.length; i < l; i++) {
-//         let opt = allInputs[i];
+        const container = document.createElement('div');
+        container.className = 'stepper-container';
+        
+        const btnMinus = document.createElement('button');
+        btnMinus.type = 'button';
+        btnMinus.className = 'stepper-btn';
+        btnMinus.textContent = '-';
+        
+        const btnPlus = document.createElement('button');
+        btnPlus.type = 'button';
+        btnPlus.className = 'stepper-btn';
+        btnPlus.textContent = '+';
 
-//         if (opt.innerText.toLowerCase().includes(e.target.value.toLowerCase()))
-//             opt.style.display = 'block';
-//         else
-//             opt.style.display = 'none';
-//     }
-// })
+        input.parentNode.insertBefore(container, input);
+        container.appendChild(btnMinus);
+        container.appendChild(input);
+        container.appendChild(btnPlus);
+        
+        input.classList.add('stepper-input');
+        input.readOnly = true;
 
+        const update = (delta) => {
+            let val = parseInt(input.value) || 0;
+            val += delta;
+            if (val < min) val = min;
+            input.value = val;
+            input.dispatchEvent(new Event('input'));
+        };
 
-/// Experiments to restore previous scroll position when window is re-opened
-// var timerToSaveScrollPosition;
+        btnMinus.onclick = () => update(-1);
+        btnPlus.onclick = () => update(1);
+        input.dataset.enhanced = 'true';
+    };
 
-// window.onscroll = function (e) {
-//     clearTimeout(timerToSaveScrollPosition);
+    // --- 2. Simplifications & Removals ---
 
-//     timerToSaveScrollPosition = setTimeout(function () {
-//         chrome.storage.local.set({ 'optionsScrollProgress': window.scrollY });
-//     }, 50);
-// };
+    // Hide Shadow Opacity (User requested removal)
+    const shadowInput = document.getElementById('shadowOpacity');
+    if (shadowInput) shadowInput.closest('.option').style.display = 'none';
 
-// setTimeout(function () {
-//     chrome.storage.local.get(['optionsScrollProgress'], function (val) {
-//         if (val.optionsScrollProgress !== null && val.optionsScrollProgress !== undefined)
-//             window.scrollTo(0, val.optionsScrollProgress);
-//     });
-// }, 100)
+    // Hide Currency Update Interval (User requested removal)
+    const ratesInput = document.getElementById('updateRatesEveryDays');
+    if (ratesInput) ratesInput.closest('.option').style.display = 'none';
+
+    // Simplify Animation Duration -> Toggle
+    createAnimationToggle();
+
+    // Merge Delay Timers -> Hover Sensitivity
+    createHoverSensitivityDropdown();
+
+    // --- 3. UX Improvements ---
+
+    // Tooltip Opacity (User requested to KEEP this, so we just improve it to a slider)
+    createSlider('tooltipOpacity', 0, 1, 0.1);
+    
+    // Other visual sliders
+    createSlider('textSelectionBackgroundOpacity', 0, 1, 0.1);
+    createSlider('borderRadius', 0, 20, 1);
+    createSlider('fontSize', 10, 30, 1);
+
+    // Steppers for counters
+    createStepper('maxTooltipButtonsToShow', 1);
+    createStepper('maxIconsInRow', 1);
+    createStepper('maxMarkerPagesToStore', 1);
+
+    // Language Dropdown
+    createLanguageDropdown();
+}
+
+function createAnimationToggle() {
+    const id = 'animationDuration';
+    const input = document.getElementById(id);
+    if (!input || input.dataset.enhanced) return;
+
+    const container = document.createElement('div');
+    container.className = 'option';
+    
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    
+    // Logic: > 0 is enabled
+    checkbox.checked = parseInt(input.value) > 0;
+    
+    checkbox.addEventListener('change', () => {
+        input.value = checkbox.checked ? 200 : 0;
+        input.dispatchEvent(new Event('input'));
+    });
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode("Enable animations"));
+    
+    container.appendChild(label);
+    
+    // Replace the original option container
+    const originalContainer = input.closest('.option');
+    originalContainer.parentNode.insertBefore(container, originalContainer);
+    originalContainer.style.display = 'none';
+    input.dataset.enhanced = 'true';
+}
+
+function createHoverSensitivityDropdown() {
+    const hoverInput = document.getElementById('delayToRevealHoverPanels');
+    const searchInput = document.getElementById('delayToRevealSearchTooltip');
+    const translateInput = document.getElementById('delayToRevealTranslateTooltip');
+
+    if (!hoverInput || hoverInput.dataset.enhanced) return;
+
+    // Hide original inputs
+    [hoverInput, searchInput, translateInput].forEach(el => {
+        if (el && el.closest('.option')) el.closest('.option').style.display = 'none';
+    });
+
+    const container = document.createElement('div');
+    container.className = 'option';
+    
+    const label = document.createElement('label');
+    label.innerText = "Hover sensitivity: ";
+    
+    const select = document.createElement('select');
+    const options = [
+        { text: 'Fast', hover: 300, search: 200, translate: 400 },
+        { text: 'Normal', hover: 700, search: 350, translate: 550 },
+        { text: 'Slow', hover: 1200, search: 800, translate: 1000 }
+    ];
+
+    // Determine current value (approximate based on hoverInput)
+    const currentVal = parseInt(hoverInput.value);
+    let selectedIndex = 1; // Default Normal
+    if (currentVal <= 300) selectedIndex = 0;
+    else if (currentVal >= 1200) selectedIndex = 2;
+
+    options.forEach((opt, index) => {
+        const optionEl = document.createElement('option');
+        optionEl.text = opt.text;
+        optionEl.value = index;
+        if (index === selectedIndex) optionEl.selected = true;
+        select.appendChild(optionEl);
+    });
+
+    select.addEventListener('change', () => {
+        const settings = options[select.value];
+        if (hoverInput) { hoverInput.value = settings.hover; hoverInput.dispatchEvent(new Event('input')); }
+        if (searchInput) { searchInput.value = settings.search; searchInput.dispatchEvent(new Event('input')); }
+        if (translateInput) { translateInput.value = settings.translate; translateInput.dispatchEvent(new Event('input')); }
+    });
+
+    label.appendChild(select);
+    container.appendChild(label);
+
+    // Insert before the first hidden input
+    const anchor = hoverInput.closest('.option');
+    anchor.parentNode.insertBefore(container, anchor);
+    hoverInput.dataset.enhanced = 'true';
+}
+
+function createLanguageDropdown() {
+    const id = 'languageToTranslate';
+    const input = document.getElementById(id);
+    if (!input || input.tagName === 'SELECT') return;
+
+    const languages = {
+        "af": "Afrikaans", "sq": "Albanian", "am": "Amharic", "ar": "Arabic",
+        "hy": "Armenian", "az": "Azerbaijani", "eu": "Basque", "be": "Belarusian",
+        "bn": "Bengali", "bs": "Bosnian", "bg": "Bulgarian", "ca": "Catalan",
+        "ceb": "Cebuano", "ny": "Chichewa", "zh-CN": "Chinese (Simplified)",
+        "zh-TW": "Chinese (Traditional)", "co": "Corsican", "hr": "Croatian",
+        "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English",
+        "eo": "Esperanto", "et": "Estonian", "tl": "Filipino", "fi": "Finnish",
+        "fr": "French", "fy": "Frisian", "gl": "Galician", "ka": "Georgian",
+        "de": "German", "el": "Greek", "gu": "Gujarati", "ht": "Haitian Creole",
+        "ha": "Hausa", "haw": "Hawaiian", "iw": "Hebrew", "hi": "Hindi",
+        "hmn": "Hmong", "hu": "Hungarian", "is": "Icelandic", "ig": "Igbo",
+        "id": "Indonesian", "ga": "Irish", "it": "Italian", "ja": "Japanese",
+        "jw": "Javanese", "kn": "Kannada", "kk": "Kazakh", "km": "Khmer",
+        "ko": "Korean", "ku": "Kurdish (Kurmanji)", "ky": "Kyrgyz", "lo": "Lao",
+        "la": "Latin", "lv": "Latvian", "lt": "Lithuanian", "lb": "Luxembourgish",
+        "mk": "Macedonian", "mg": "Malagasy", "ms": "Malay", "ml": "Malayalam",
+        "mt": "Maltese", "mi": "Maori", "mr": "Marathi", "mn": "Mongolian",
+        "my": "Myanmar (Burmese)", "ne": "Nepali", "no": "Norwegian", "ps": "Pashto",
+        "fa": "Persian", "pl": "Polish", "pt": "Portuguese", "pa": "Punjabi",
+        "ro": "Romanian", "ru": "Russian", "sm": "Samoan", "gd": "Scots Gaelic",
+        "sr": "Serbian", "st": "Sesotho", "sn": "Shona", "sd": "Sindhi",
+        "si": "Sinhala", "sk": "Slovak", "sl": "Slovenian", "so": "Somali",
+        "es": "Spanish", "su": "Sundanese", "sw": "Swahili", "sv": "Swedish",
+        "tg": "Tajik", "ta": "Tamil", "te": "Telugu", "th": "Thai", "tr": "Turkish",
+        "uk": "Ukrainian", "ur": "Urdu", "uz": "Uzbek", "vi": "Vietnamese",
+        "cy": "Welsh", "xh": "Xhosa", "yi": "Yiddish", "yo": "Yoruba", "zu": "Zulu"
+    };
+
+    const select = document.createElement('select');
+    select.id = id;
+    
+    // Add options
+    for (const [code, name] of Object.entries(languages)) {
+        const opt = document.createElement('option');
+        opt.value = code;
+        opt.textContent = name;
+        if (input.value === code) opt.selected = true;
+        select.appendChild(opt);
+    }
+
+    // Handle change
+    select.addEventListener('change', () => {
+        userConfigs[id] = select.value;
+        saveAllSettings();
+        updateDisabledOptions();
+    });
+
+    // Fix label position: Move text node before the input so it appears as "Label: [Dropdown]"
+    const labelText = input.nextSibling;
+    if (labelText && labelText.nodeType === 3) {
+        input.parentNode.insertBefore(labelText, input);
+    }
+
+    input.parentNode.replaceChild(select, input);
+}

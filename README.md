@@ -1,15 +1,7 @@
 <!-- # <sub><img src="./src/assets/icons/logo-new.png" height="48" width="48"></sub> SelectON — text selection popup -->
 ### <img src="./screenshots/banner.png" alt="SelectON — Customizable pop-up on text selection" >
 
-[![Changelog](https://img.shields.io/chrome-web-store/v/pemdbnndbdpbelmfcddaihdihdfmnadi?label=version&color=yellow)](./CHANGELOG.md)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/pemdbnndbdpbelmfcddaihdihdfmnadi?label=users&logo=googlechrome&logoColor=white&color=blue)](https://chrome.google.com/webstore/detail/selection-actions/pemdbnndbdpbelmfcddaihdihdfmnadi)
-[![Mozilla Add-on](https://img.shields.io/amo/users/selection-actions?color=%23FF6611&label=users&logo=Firefox)](https://addons.mozilla.org/firefox/addon/selection-actions/)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/rating/pemdbnndbdpbelmfcddaihdihdfmnadi)](https://chrome.google.com/webstore/detail/selecton/pemdbnndbdpbelmfcddaihdihdfmnadi/reviews)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/pemdbnndbdpbelmfcddaihdihdfmnadi?style=flat&label=reviews)](https://chrome.google.com/webstore/detail/selecton/pemdbnndbdpbelmfcddaihdihdfmnadi/reviews)
-![Created](https://img.shields.io/github/created-at/emvaized/selecton-extension?color=purple&label=created)
-[![Support this project](https://img.shields.io/badge/%E2%9D%A4%EF%B8%8F_Support_this_project-grey)](https://github.com/emvaized/selecton-extension?tab=readme-ov-file#donate)
-<!-- [![Support project](https://shields.io/badge/Ko--fi-Donate-ff5f5f?logo=Ko-Fi&style=for-the-badgeKo-fi)](https://ko-fi.com/emvaized) -->
-<!-- [![Patreon](https://shields.io/badge/Patreon-Become_a_patron-f76859?logo=Patreon)](https://patreon.com/emvaized) -->
+![Created](https://img.shields.io/github/created-at/kach17/selecton-extension?color=purple&label=created)
 
 
 
@@ -26,7 +18,7 @@
 * Dictionary button, which fetches definition from Wikipedia on hover
 * Highlighter button, which allows to highlight specific text on page and quickly find it later
 
-<a href="https://addons.mozilla.org/firefox/addon/selection-actions/"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get for Firefox"></a> &nbsp; <a href="https://chrome.google.com/webstore/detail/selection-actions/pemdbnndbdpbelmfcddaihdihdfmnadi"><img src="https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" alt="Get for Chrome" height=65 ></a>
+
 
 
 ## Screenshots
@@ -45,12 +37,7 @@
 
 ## FAQ
 
-Moved to the Wiki page – [read here](https://github.com/emvaized/selecton-extension/wiki/FAQ-(Frequently-Asked-Questions))
-
-## Donate
-If you really enjoy this project, please consider supporting its further development by making a small donation using one of the ways below! 
-
-<a href="https://ko-fi.com/emvaized"><img src="https://storage.ko-fi.com/cdn/kofi5.png?v=6" alt="Support on Ko-fi" height="40"></a> &nbsp; <a href="https://patreon.com/emvaized"><img src="https://github.com/emvaized/emvaized.github.io/blob/main/donate/assets/patreon-donate-button.png?raw=true" alt="Patreon" height="40" /></a> &nbsp; <a href="https://liberapay.com/emvaized/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg" height="40"></a> &nbsp; <a href="https://emvaized.github.io/donate/bitcoin/"><img src="https://github.com/emvaized/emvaized.github.io/blob/main/donate/bitcoin/assets/bitcoin-donate-button.png?raw=true" alt="Donate Bitcoin" height="40" /></a>
+Moved to the Wiki page – [read here](https://github.com/kach17/selecton-extension/wiki/FAQ-(Frequently-Asked-Questions))
 
 ## Currency conversion
 In order to make extension more autonomous, currency rates are set to be updated every 2 weeks, and at the moment of conversion data may not be 100% accurate. Currency conversion output is intended to be used only for a quick estimation. You can decrease update interval in extension's settings if needed, but minimal value for now is 7 days to not cause too much load on API servers. Currency rates are fetched from fawazahmed0's [currency-api](https://github.com/fawazahmed0/exchange-api/blob/main/README.md).
@@ -115,7 +102,7 @@ You can make SelectON better without even knowing how to code:
 - SelectON relies on looking for keywords in the selected text. Enhance them with keywords for your language: [Keywords](./src/data/keywords.js)
 
 Make your changes, and then create pull request here on GitHub so I can merge it.
-Also, you can always write me an [email](mailto:maximtsyba@gmail.com) to share your ideas and suggestions.
+
 
 **Some ideas for future releases**
 

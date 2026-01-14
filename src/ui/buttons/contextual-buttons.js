@@ -4,6 +4,8 @@ function addContextualButtons(callbackOnFinish) {
 
     if (selection == null) return;
 
+    const initialChildrenCount = tooltip.children.length;
+
     const loweredSelectedText = selectedText.toLowerCase();
     const wordsCount = selectedText.split(' ').length;
     const selectionContainsSpaces = selectedText.includes(' ');
@@ -662,7 +664,12 @@ function addContextualButtons(callbackOnFinish) {
     }
 
     const containsSpecialSymbols = /[`#$^*_\\[\]{}=|<>~]/.test(selectedText) || isFileName || (selectionLength == 1 && /[,.()]/.test(selectedText));
-    const contextButtonWasAdded = tooltip.children[3] && 
+    
+    let basicElementsCount = 3; // Arrow, Search, Copy
+    if (configs.showInfoPanel) basicElementsCount += 1;
+    if (configs.enableMultiCopyStack) basicElementsCount += 1;
+
+    const contextButtonWasAdded = tooltip.children.length > basicElementsCount && 
         configs.customSearchOptionsDisplay !== 'panelCustomSearchStyle';
 
     /// Add hover buttons when enabled, and no other contextual buttons were added
@@ -671,6 +678,20 @@ function addContextualButtons(callbackOnFinish) {
     } else addStaticButtons();
 
     function addStaticButtons() {
+        /// Prioritize contextual button (move to front)
+        try {
+            if (tooltip.children.length > initialChildrenCount) {
+                let insertionIndex = 1; // Skip Arrow
+                if (configs.showInfoPanel) insertionIndex++;
+                
+                const contextualBtn = tooltip.lastElementChild;
+                const refNode = tooltip.children[insertionIndex];
+                if (refNode && contextualBtn !== refNode) {
+                    tooltip.insertBefore(contextualBtn, refNode);
+                }
+            }
+        } catch (e) { if (configs.debugMode) console.log(e); }
+
         /// Add quote reply button
         /// TODO: False detections, needs further improvement and translations
         if (configs.addQuoteButton){
@@ -734,7 +755,7 @@ function addContextualButtons(callbackOnFinish) {
 
         /// Add button to expand text selection
         if (configs.addExtendSelectionButton){
-            const extendSelectionBtn = addBasicTooltipButton(chrome.i18n.getMessage('extendSelection'), extendSelectionIcon, extendSelectionToParentEl);
+            const extendSelectionBtn = addBasicTooltipButton(chrome.i18n.getMessage('extendSelection'), extendSelectionIcon, extendSelectionToParentEl, false, undefined, false);
             extendSelectionBtn.title = chrome.i18n.getMessage('extendSelectionTooltip');
             extendSelectionBtn.id = 'selecton-extend-selection-button';
         }

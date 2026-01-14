@@ -3,7 +3,7 @@
     "message": "Action buttons"
   },
   "addActionButtonsForTextFields": {
-    "message": "Use special panel for text fields"
+    "message": "Enable actions in text fields"
   },
   "addButtonIcons": {
     "message": "Show icons for buttons"
@@ -14,14 +14,17 @@
   "addCalendarButton": {
     "message": "Add calendar button for dates"
   },
+  "appendCopyLabel": {
+    "message": "Append to copy stack"
+  },
   "addClearButton": {
-    "message": "Show 'Clear' button on click non-empty field"
+    "message": "Show 'Clear' button in non-empty fields"
   },
   "addColorPreviewButton": {
     "message": "Add color preview button (for CSS colors like #ffffff)"
   },
   "addDragHandles": {
-    "message": "Add selection drag handles"
+    "message": "Show selection handles"
   },
   "addExtendSelectionButton": {
     "message": "Add button to extend current text selection"
@@ -39,10 +42,10 @@
     "message": "Add button to open link"
   },
   "addPasteButton": {
-    "message": "Show 'Paste' button when click on text field"
+    "message": "Show 'Paste' button in text fields"
   },
   "addPasteOnlyEmptyField": {
-    "message": "... only when field is empty"
+    "message": "Only if field is empty"
   },
   "addPhoneButton": {
     "message": "Add phone number button"
@@ -54,13 +57,13 @@
     "message": "Use scale-up effect on reveal"
   },
   "addTooltipShadow": {
-    "message": "Add tooltip shadow"
+    "message": "Drop shadow"
   },
   "allChangesSavedAutomatically": {
     "message": "All settings are saved automatically"
   },
   "animationDuration": {
-    "message": "Animations duration (ms)"
+    "message": "Animation speed"
   },
   "appearanceHeader": {
     "message": "Appearance"
@@ -81,7 +84,7 @@
     "message": "Buttons style"
   },
   "buyMeCoffee": {
-    "message": "Support project"
+    "message": "Support"
   },
   "callLabel": {
     "message": "Call"
@@ -102,7 +105,10 @@
     "message": "Always show collapsed buttons as a static panel"
   },
   "collapseButtons": {
-    "message": "Hide exceeding buttons under 'More' button"
+    "message": "Group extra buttons under 'More'"
+  },
+  "comma": {
+    "message": "Comma"
   },
   "contextualButtonsHeader": {
     "message": "Buttons"
@@ -120,7 +126,7 @@
     "message": "Convert time"
   },
   "convertToCurrency": {
-    "message": "Currency to convert to (<a target='_blank' href='https://github.com/emvaized/selecton-extension#currency-converter'>info</a>)"
+    "message": "Currency to convert to (<a target='_blank' href='https://github.com/kach17/selecton-extension#currency-converter'>info</a>)"
   },
   "convertToCurrencyHint": {
     "message": "See 'Code' <a target='_blank' href='https://www.iban.com/currency-codes'>here</a> for reference"
@@ -132,7 +138,7 @@
     "message": "Copy"
   },
   "correctTooltipPositionByMoreButtonWidth": {
-    "message": "Shift the panel by width of 'More' button"
+    "message": "Adjust position for 'More' button"
   },
   "customIcon": {
     "message": "Custom icon"
@@ -173,10 +179,10 @@
     "message": "Debug mode"
   },
   "delayToRevealHoverPanels": {
-    "message": "Delay before revealing panels on hover (ms)"
+    "message": "Hover delay"
   },
   "delayToRevealSearchTooltip": {
-    "message": "Delay before reveal panel (ms)"
+    "message": "Search panel reveal delay"
   },
   "delayToRevealTranslateTooltip": {
     "message": "Delay before auto translate (ms)"
@@ -196,6 +202,9 @@
   "dictionaryLabel": {
     "message": "Dictionary"
   },
+  "doubleNewline": {
+    "message": "Double new line"
+  },
   "disableForBetterPerformance": {
     "message": "Disable for better performance"
   },
@@ -203,7 +212,7 @@
     "message": "Disable word snapping for code"
   },
   "disableWordSnappingOnCtrlKey": {
-    "message": "Do not select by words if the CTRL key is pressed"
+    "message": "Disable smart selection when holding Ctrl"
   },
   "dontSnapTextfieldSelection": {
     "message": "Do not snap selection in text fields"
@@ -216,6 +225,9 @@
   },
   "email": {
     "message": "Email"
+  },
+  "enableMultiCopyStack": {
+    "message": "Enable Multi-Copy Stack"
   },
   "enabled": {
     "message": "Enabled"
@@ -266,13 +278,13 @@
     "message": "Hide tooltip on scroll"
   },
   "hideTooltipOnActionButtonClick": {
-    "message": "Hide tooltip on action button click"
+    "message": "Close panel after action"
   },
   "hideTooltipOnContextMenuOpen": {
-    "message": "Hide tooltip on context menu open"
+    "message": "Close panel on right-click"
   },
   "hideTooltipWhenCursorMovesAway": {
-    "message": "Hide tooltip when cursor moves away"
+    "message": "Close panel when mouse moves away"
   },
   "hideTranslateButtonForUserLanguage": {
     "message": "Hide translate button for user's language"
@@ -332,7 +344,7 @@
     }
   },
   "invertColorOnDarkWebsite": {
-    "message": "Invert color on dark website"
+    "message": "Adaptive color for dark mode"
   },
   "italicLabel": {
     "message": "Italic"
@@ -341,7 +353,7 @@
     "message": "User's language (<a target='_blank' href='https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'>ISO 639-1 code</a>)"
   },
   "leftClickBackgroundTab": {
-    "message": "Left click opens link as background tab"
+    "message": "Open links in background tab"
   },
   "linesCount": {
     "message": "Lines"
@@ -353,7 +365,7 @@
     "message": "Copy link"
   },
   "liveTranslation": {
-    "message": "Live translation on button hover (Google Translate)"
+    "message": "Live translation preview"
   },
   "mailto": {
     "message": "Email client"
@@ -380,7 +392,10 @@
     "message": "Metric"
   },
   "middleClickHidesTooltip": {
-    "message": "Middle click (to open in background) hides panel"
+    "message": "Close panel on middle-click"
+  },
+  "multiCopySeparator": {
+    "message": "Separator"
   },
   "monthAgo": {
     "message": "Month ago"
@@ -404,6 +419,9 @@
   },
   "moveUpTooltipEffect": {
     "message": "Move up"
+  },
+  "newline": {
+    "message": "New line"
   },
   "noDefinitionFound": {
     "message": "No definition found"
@@ -436,10 +454,10 @@
     "message": "Paste"
   },
   "performSimpleMathOperations": {
-    "message": "Perform simple math calculations"
+    "message": "Calculate math expressions"
   },
   "preferCurrencySymbol": {
-    "message": "Prefer currency symbols instead of codes"
+    "message": "Use currency symbols ($) instead of codes (USD)"
   },
   "preferredMapsService": {
     "message": "Preferred map service"
@@ -472,7 +490,7 @@
     "message": "Remove custom icon"
   },
   "removeSelectionOnActionButtonClick": {
-    "message": "Remove text selection after selected action"
+    "message": "Clear selection after action"
   },
   "resetDefaults": {
     "message": "Restore defaults"
@@ -514,49 +532,49 @@
     "message": "Shadow opacity"
   },
   "shiftTooltipWhenWebsiteHasOwn": {
-    "message": "Try to shift tooltip up when website shows it's own for text selection"
+    "message": "Avoid overlap with website tooltips"
   },
   "shouldOverrideWebsiteSelectionColor": {
     "message": "Overwrite page's highlight color"
   },
   "showButtonBorders": {
-    "message": "Show button dividers"
+    "message": "Show dividers between buttons"
   },
   "showButtonLabelOnHover": {
-    "message": "Show button label on hover"
+    "message": "Show text labels on hover"
   },
   "showDictionaryButton": {
-    "message": "Show the dictionary button"
+    "message": "Dictionary button"
   },
   "showDotForHoverButtons": {
-    "message": "Show dot on buttons with hover event"
+    "message": "Indicate hoverable buttons with a dot"
   },
   "showEmailButton": {
-    "message": "Add email button"
+    "message": "Email button"
   },
   "showInfoPanel": {
-    "message": "Show info panel (word and symbols count)"
+    "message": "Show info panel (word count)"
   },
   "showOnMap": {
     "message": "Show on map"
   },
   "showOnMapButtonEnabled": {
-    "message": "Add button to show on map"
+    "message": "Maps button"
   },
   "showSecondaryTooltipTitleOnHover": {
     "message": "Show title on hover"
   },
   "showStatsOnCopyButtonHover": {
-    "message": "Show stats on Copy button hover"
+    "message": "Show word count on 'Copy' hover"
   },
   "showTooltipArrow": {
-    "message": "Show tooltip arrow"
+    "message": "Show arrow"
   },
   "showTranslateButton": {
-    "message": "Show translate button"
+    "message": "Translate button"
   },
   "showTranslateIfLanguageUnknown": {
-    "message": "Show translate button if language is not detected"
+    "message": "Show if language unknown"
   },
   "showUnconvertedValue": {
     "message": "Show original value before conversion"
@@ -565,7 +583,7 @@
     "message": "Show notification on update"
   },
   "snapSelectionToWord": {
-    "message": "Snap text selection by word"
+    "message": "Smart text selection"
   },
   "strikeLabel": {
     "message": "Strike"
@@ -604,7 +622,7 @@
     "message": "Horizontal alignment of tooltip"
   },
   "tooltipRevealEffect": {
-    "message": "Tooltip reveal effect"
+    "message": "Reveal animation"
   },
   "translateLabel": {
     "message": "Translate"
@@ -634,7 +652,7 @@
     "message": "Rates update interval (days)"
   },
   "useCustomStyle": {
-    "message": "Use custom style for tooltip"
+    "message": "Custom styling"
   },
   "useIconFromGoogle": {
     "message": "Use icon from Google"
@@ -643,13 +661,13 @@
     "message": "Vertical"
   },
   "verticalLayoutTooltip": {
-    "message": "Use vertical tooltip layout (experimental)"
+    "message": "Vertical layout"
   },
   "verticalSecondaryTooltip": {
     "message": "Display as vertical list (disable for horizontal)"
   },
   "visitGithub": {
-    "message": "Visit GitHub page"
+    "message": "GitHub"
   },
   "whatsNew": {
     "message": "What's new"
@@ -661,7 +679,7 @@
     "message": "Words"
   },
   "writeAReview": {
-    "message": "Write a review"
+    "message": "Rate extension"
   },
   "yearAgo": {
     "message": "Year ago"

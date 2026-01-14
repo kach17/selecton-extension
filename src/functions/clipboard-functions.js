@@ -18,7 +18,7 @@ function getCurrentClipboard() {
 
 function copyManuallyToClipboard(text) {
     try {
-        const input = document.createElement('input');
+        const input = document.createElement('textarea');
         input.setAttribute('style', `position: fixed; top: 0px; left: 0px; opacity: 0.0;`)
         document.body.appendChild(input);
         input.value = text;
