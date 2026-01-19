@@ -1,5 +1,5 @@
 console.log("Selecton: Loading currencies.js");
-export const currenciesList = {
+const currenciesList = {
     AUD: { name: "Australian Dollar", symbol: "A$", rate: 1.29009, keywords: ["australian dollar", "австралийских доллар"] },
     BGN: { name: "Bulgarian Lev", symbol: "лв", rate: 1.640562 },
     BRL: { name: "Brazilian real", symbol: "R$", rate: 5.616101 },
