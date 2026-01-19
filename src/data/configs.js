@@ -1,4 +1,5 @@
-const configs = {
+console.log("Selecton: Loading configs.js");
+export const configs = {
     addActionButtonsForTextFields: false,
     addButtonToCopyLinkToText: true,
     addCalendarButton: true,

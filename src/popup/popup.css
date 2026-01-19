@@ -1,3 +1,4 @@
+/* --- Header Styles --- */
 #selecton-settings-label {
     display: inline; font-size: 18px;vertical-align: middle; color: grey; 
 }
@@ -27,15 +28,8 @@
     display: inline; vertical-align: middle;
 }
 
-iframe {
-    display: block; margin: 0px !important; width: 100%; 
-    height: 525px; 
-    min-width: 400px; 
-}
-
 @-moz-document url-prefix() {
   body { font-family: sans-serif !important; }
-  iframe { min-width: 365px; }
   #headerLogo {vertical-align: bottom;}
 }
 
@@ -46,7 +40,275 @@ iframe {
     }
 }}
 
+/* --- Options Menu Styles (Merged) --- */
+
+/* 1. Global Settings & Typography */
+html {
+  background-color: #ffffff;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 600px;
+  /* Padding handled in options-container to preserve header width */
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 14px;
+  color: #333;
+  min-width: 400px;
+  background-color: #ffffff;
+}
+
+.options-container {
+  padding: 15px 20px;
+}
+
+h3, h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #e0e0e0;
+  margin: 20px 0;
+}
+
+a {
+  color: #0078d4;
+  text-decoration: none;
+}
+
+/* 2. Main Layout (The "Row" Structure) */
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 4px 0;
+}
+
+.child-option {
+  margin-left: 25px;
+  padding-left: 10px;
+  border-left: 2px solid #f0f0f0;
+}
+
+.disabled-option {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.hidden-option {
+  display: none !important;
+}
+
+/* 3. Standard Inputs & Controls */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #0078d4;
+}
+
+button {
+  padding: 6px 14px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #005a9e;
+}
+
+/* Modern Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0078d4;
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* 4. Advanced Inputs (Sliders & Steppers) */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 200px;
+}
+
+.slider-container input[type=range] {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.slider-value {
+  min-width: 30px;
+  text-align: right;
+  font-weight: bold;
+}
+
+/* 5. Collapsible Sections (Accordions) */
+.collapsible-header {
+  background-color: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+  padding: 12px 15px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+  margin-top: 15px;
+  transition: background-color 0.2s;
+}
+
+.collapsible-header:hover {
+  background-color: #e9ecef;
+}
+
+.collapsible-header:after {
+  content: '\002B'; /* Plus */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.collapsible-header.active:after {
+  content: "\2212"; /* Minus */
+}
+
+.collapsible-content {
+  padding: 0 15px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background-color: white;
+}
+
+/* 6. Feature Modules (Markers, Search) */
+.custom-search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.custom-search-row input {
+  flex: 1;
+}
+
+.custom-search-option-move-button {
+  background-color: transparent;
+  color: #555;
+  border: 1px solid #d1d1d1;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.custom-search-option-move-button:hover {
+  background-color: #eee;
+}
+
+/* Markers */
+.marker-website-tile {
+  cursor: pointer;
+  position: relative !important;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin: 4px 0px;
+  background-color: #fff;
+}
+
+.marker-website-favicon {
+  display: inline; margin-right: 8px; width: 15px; height: 15px; vertical-align: middle !important;
+}
+
+.marker-tile {
+  position: relative;
+  padding: 8px 0px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.marker-highlight-delete {
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.marker-highlight-delete:hover {
+  background-color: #ffebee;
+  color: #d32f2f !important;
+}
+
+.marker-color-preview {
+  width: 12px; height: 12px; 
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* --- Dark Mode Overrides --- */
  @media (prefers-color-scheme: dark) {
+    html {
+        background: rgb(40,41,44);
+    }
+
     body {
         background: rgb(40,41,44);
         color: white;
@@ -62,5 +324,58 @@ iframe {
 
     #popup-header {
         border-bottom: 1px solid gray;
+    }
+
+    /* Options Dark Mode */
+    h3, h4 {
+        color: #ffffff;
+    }
+
+    hr {
+        border-top-color: #333;
+    }
+
+    .child-option {
+        border-left-color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        background-color: #2d2d2d;
+        color: white;
+        border-color: #444;
+    }
+
+    .collapsible-header {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+
+    .collapsible-header:hover {
+        background-color: #383838;
+    }
+
+    .collapsible-content {
+        background-color: #1e1e1e;
+    }
+
+    /* Markers Dark Mode */
+    .marker-website-tile {
+        background-color: #2d2d2d;
+        border-color: #444;
+    }
+    
+    .marker-tile {
+        border-bottom-color: #333;
+    }
+
+    .custom-search-option-move-button {
+        color: #ddd;
+        border-color: #555;
+    }
+
+    .custom-search-option-move-button:hover {
+        background-color: #444;
     }
 }

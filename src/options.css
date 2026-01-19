@@ -1,0 +1,306 @@
+/* 1. Global Settings & Typography */
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 14px;
+  color: #333;
+  min-width: 400px;
+  background-color: #ffffff;
+}
+
+h3, h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #e0e0e0;
+  margin: 20px 0;
+}
+
+a {
+  color: #0078d4;
+  text-decoration: none;
+}
+
+/* 2. Main Layout (The "Row" Structure) */
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 4px 0;
+}
+
+.child-option {
+  margin-left: 25px;
+  padding-left: 10px;
+  border-left: 2px solid #f0f0f0;
+}
+
+.disabled-option {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.hidden-option {
+  display: none !important;
+}
+
+/* 3. Standard Inputs & Controls */
+input[type="text"],
+input[type="number"],
+select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #0078d4;
+}
+
+button {
+  padding: 6px 14px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #005a9e;
+}
+
+/* Modern Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0078d4;
+}
+
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* 4. Advanced Inputs (Sliders & Steppers) */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 200px;
+}
+
+.slider-container input[type=range] {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.slider-value {
+  min-width: 30px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.stepper-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stepper-btn {
+  padding: 5px 10px;
+  background: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  margin: 0;
+  border-radius: 0;
+}
+
+.stepper-btn:hover {
+  background: #e0e0e0;
+}
+
+.stepper-container input {
+  border: none;
+  text-align: center;
+  width: 40px;
+  margin: 0;
+  padding: 5px 0;
+  -moz-appearance: textfield;
+}
+
+/* 5. Collapsible Sections (Accordions) */
+.collapsible-header {
+  background-color: #f8f9fa;
+  color: #333;
+  cursor: pointer;
+  padding: 12px 15px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+  margin-top: 15px;
+  transition: background-color 0.2s;
+}
+
+.collapsible-header:hover {
+  background-color: #e9ecef;
+}
+
+.collapsible-header:after {
+  content: '\002B'; /* Plus */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.collapsible-header.active:after {
+  content: "\2212"; /* Minus */
+}
+
+.collapsible-content {
+  padding: 0 15px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background-color: white;
+}
+
+/* 6. Feature Modules */
+/* Custom Search */
+.custom-search-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.custom-search-row input {
+  flex: 1;
+}
+
+/* Markers */
+.marker-list {
+  margin-top: 10px;
+}
+
+.marker-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.marker-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.marker-favicon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 7. Theme & Responsive */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+  }
+
+  h3, h4 {
+    color: #ffffff;
+  }
+
+  hr {
+    border-top-color: #333;
+  }
+
+  .child-option {
+    border-left-color: #333;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    background-color: #2d2d2d;
+    color: white;
+    border-color: #444;
+  }
+
+  .collapsible-header {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+  }
+
+  .collapsible-header:hover {
+    background-color: #383838;
+  }
+
+  .collapsible-content {
+    background-color: #1e1e1e;
+  }
+
+  .stepper-btn {
+    background-color: #333;
+    color: #eee;
+  }
+
+  .stepper-btn:hover {
+    background-color: #444;
+  }
+}

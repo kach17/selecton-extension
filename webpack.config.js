@@ -8,7 +8,8 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 module.exports = {
   /// background script
   entry: {
-    background: "./src/functions/background.js"
+    background: "./src/functions/background.js",
+    popup: "./src/popup/popup.js",
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -52,11 +53,8 @@ module.exports = {
         "src/index.css",
         { from: "src/_locales", to: "_locales" },
         { from: "src/assets", to: "assets" },
-        { from: "src/popup", to: "popup" },
+        { from: "src/popup", to: "popup", globOptions: { ignore: ["**/popup.js"] } },
         { from: "src/options", to: "options" },
-        /// additional dependencies for toolbar popup and options page
-        { from: "src/data/configs.js", to: "src/data/" },
-        { from: "src/data/currencies.js", to: "src/data/" },
       ],
     }),
   ],
