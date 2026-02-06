@@ -9,7 +9,7 @@ module.exports = {
   /// background script
   entry: {
     background: "./src/functions/background.js",
-    popup: "./src/popup/popup.js",
+    "popup/popup": "./src/popup/popup.js",
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

@@ -253,22 +253,107 @@ function initMouseListeners() {
       } catch (e) { }
 
       /// Check if clicked on text field
-      updateTextFieldFocusState(activeEl);
+      checkTextField(activeEl);
 
       if (selectedText.length > 0) {
         /// create tooltip for selection
-        setTooltipAppearanceStyles();
+        setCssStyles();
         initTooltip(e);
       } else {
         /// no selection on page - check if textfield is focused to create 'Paste' tooltip
         if (configs.addActionButtonsForTextFields && isTextFieldFocused) {
-          setTooltipAppearanceStyles();
+          setCssStyles();
           initTooltip(e);
         }
       }
 
     }, e.detail == 3 ? 200 : 0) /// special handling for triple mouse click (paragraph selection)
   });
+
+  function setCssStyles() {
+    if (configs.debugMode)
+      console.log('--- Creating Selecton tooltip ---');
+
+    /// Check page to have dark background
+    setTimeout(function () {
+      let isDarkPage = false;
+
+      if (configs.invertColorOnDarkWebsite)
+        try {
+            isDarkPage = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          } catch (e) { }
+
+      /// Set css styles
+      if (configs.useCustomStyle) {
+        /// Custom style from settings
+        const bgColor = isDarkPage ? configs.tooltipInvertedBackground : configs.tooltipBackground;
+        document.documentElement.style.setProperty('--selecton-background-color', bgColor);
+        // document.documentElement.style.setProperty('--selecton-background-color', 'rgba(0,0,0,0.5)');
+        getTextColorForBackground(bgColor);
+
+        document.documentElement.style.setProperty('--selection-button-foreground', isDarkTooltip ? 'rgb(255,255,255)' : 'rgb(0,0,0)');
+        document.documentElement.style.setProperty('--selection-button-background-hover', isDarkTooltip ? 'rgba(255,255,255, 0.3)' : 'rgba(0,0,0, 0.5)');
+        document.documentElement.style.setProperty('--selecton-outline-color', isDarkTooltip ? 'rgba(255,255,255, 0.2)' : 'rgba(0,0,0, 0.2)');
+        document.documentElement.style.setProperty('--selecton-info-panel-color', isDarkTooltip ? 'rgba(255,255,255, 0.7)' : 'rgba(0,0,0, 0.7)');
+        secondaryColor = isDarkTooltip ? 'lightBlue' : 'royalBlue';
+      } else {
+        /// Default style
+        document.documentElement.style.setProperty('--selecton-background-color', isDarkPage ? '#bfbfbf' : '#333232');
+        document.documentElement.style.setProperty('--selection-button-foreground', isDarkPage ? '#000000' : '#ffffff');
+        document.documentElement.style.setProperty('--selection-button-background-hover', isDarkPage ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.3)');
+        document.documentElement.style.setProperty('--selecton-outline-color', isDarkPage ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.2)');
+        document.documentElement.style.setProperty('--selecton-info-panel-color', isDarkPage ? 'rgba(0,0,0, 0.7)' : 'rgba(255,255,255, 0.7)');
+        secondaryColor = isDarkPage ? 'royalBlue' : 'lightBlue';
+        isDarkTooltip = !isDarkPage;
+      }
+
+      /// Invert buttons icons when dark tooltip
+      document.documentElement.style.setProperty('--selecton-button-icon-invert', `invert(${isDarkTooltip ? '100' : '0'}%)`);
+
+      /// Accent color for convert result buttons
+      document.documentElement.style.setProperty('--selecton-secondary-color', secondaryColor);
+    }, 0);
+  }
+
+  function checkTextField(target) {
+    /// check if textfield is focused
+
+    // const target = e.target;
+    isTextFieldFocused = (
+      target.tagName === "INPUT" && (
+          target.type == 'text' || 
+          target.type == 'email' || 
+          target.type == 'search' || 
+          target.type == 'text'
+      )) ||  target.tagName === "TEXTAREA" || target.hasAttribute('contenteditable');
+
+    if (isTextFieldFocused && configs.addActionButtonsForTextFields) {
+      /// Special handling for Firefox 
+      /// (https://stackoverflow.com/questions/20419515/window-getselection-of-textarea-not-working-in-firefox)
+      if (selectedText == '' && navigator.userAgent.indexOf("Firefox") > -1) {
+        const ta = document.querySelector(':focus');
+        if (ta != null && ta.value != undefined) {
+          selectedText = sanitizeText(ta.value.substring(ta.selectionStart, ta.selectionEnd));
+          selection = ta.value.substring(ta.selectionStart, ta.selectionEnd);
+        }
+      }
+
+      /// Hide previous 'paste' button
+      // if (selectedText == '') hideTooltip(); 
+
+      /// Ignore single click on text field with inputted value
+      try {
+        isTextFieldEmpty = true;
+        if (target.getAttribute('contenteditable') != null && target.innerHTML != '' && selectedText == '' && target.innerHTML != '<br>') {
+          isTextFieldEmpty = false;
+          if (configs.addPasteOnlyEmptyField) isTextFieldFocused = false;
+        } else if (target.value && target.value.trim() !== '' && selectedText == '') {
+          isTextFieldEmpty = false;
+          if (configs.addPasteOnlyEmptyField) isTextFieldFocused = false;
+        }
+      } catch (e) { console.log(e); }
+    }
+  }
 
   function initTooltip(e) {
     createTooltip(e);
@@ -381,7 +466,7 @@ function initMouseListeners() {
     if (!c.expandedSettingsSections) {
       initConfigs(() => {
         setDocumentStyles();
-        setTooltipAppearanceStyles();
+        setCssStyles();
         if (tooltipIsShown) {
           hideDragHandles(false);
           initTooltip(lastMouseUpEvent);

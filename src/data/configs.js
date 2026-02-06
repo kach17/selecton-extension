@@ -1,5 +1,5 @@
-console.log("Selecton: Loading configs.js");
-export const configs = {
+// Default configuration for Selecton Extension
+const DEFAULT_CONFIGS = {
     addActionButtonsForTextFields: false,
     addButtonToCopyLinkToText: true,
     addCalendarButton: true,
@@ -118,3 +118,9 @@ export const configs = {
     verticalLayoutTooltip: false,
     wordSnappingBlacklist: ""
 };
+
+// Expose to global scope for popup
+if (typeof window !== 'undefined') {
+    window.configs = DEFAULT_CONFIGS;
+    console.log("Selecton: Default configs loaded");
+}
