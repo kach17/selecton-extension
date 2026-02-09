@@ -1,190 +1,24 @@
+import DEFAULT_CONFIGS from '../data/configs.js';
+import CURRENCIES from '../data/currencies.js';
+
 console.log("Selecton: popup.js script started");
-
-// Embedded defaults (no external dependencies)
-const DEFAULT_CONFIGS = {
-    addActionButtonsForTextFields: false,
-    addButtonToCopyLinkToText: true,
-    addCalendarButton: true,
-    addClearButton: true,
-    addColorPreviewButton: true,
-    addDragHandles: true,
-    addExtendSelectionButton: true,
-    addFontFormatButtons: true,
-    addMarkerButton: true,
-    addOpenLinks: true,
-    addPasteButton: true,
-    addPasteOnlyEmptyField: true,
-    addPhoneButton: true,
-    addQuoteButton: true,
-    addTooltipShadow: false,
-    animationDuration: 200,
-    applyConfigsImmediately: false,
-    borderRadius: 4,
-    buttonsStyle: "onlylabel",
-    changeTextSelectionColor: false,
-    collapseAsSecondPanel: false,
-    collapseButtons: true,
-    convertCurrencies: true,
-    convertMetrics: true,
-    convertResultClickAction: "search",
-    convertTime: true,
-    convertToCurrency: "USD",
-    correctTooltipPositionByMoreButtonWidth: true,
-    customSearchButtons: [
-        { enabled: true, title: "YouTube", url: "https://www.youtube.com/results?search_query=%s" },
-        { enabled: true, title: "Spotify", url: "https://open.spotify.com/search/%s" },
-        { enabled: true, icon: "https://img.icons8.com/color/452/aliexpress.png", title: "Ali (ru)", url: "https://aliexpress.ru/wholesale?catId=&SearchText=%s" },
-        { enabled: false, title: "Ali (en)", url: "https://www.aliexpress.com/wholesale?SearchText=%s" },
-        { enabled: true, icon: "https://www.amazon.com/favicon.ico", title: "Amazon", url: "https://www.amazon.com/s?k=%s" },
-        { enabled: false, title: "Wikipedia", url: "https://wikipedia.org/w/index.php?search=%s" },
-        { enabled: false, title: "IMDB", url: "https://www.imdb.com/find?s=alt&q=%s" },
-        { enabled: false, title: "Search on website", url: "https://google.com/search?q=site:%w %s" }
-    ],
-    customSearchOptionsDisplay: "hoverCustomSearchStyle",
-    customSearchUrl: "",
-    debugMode: false,
-    delayToRevealHoverPanels: 700,
-    delayToRevealSearchTooltip: 350,
-    delayToRevealTranslateTooltip: 550,
-    dictionaryButtonResponseCharsAmount: 400,
-    dictionaryButtonWordsAmount: 1,
-    disableWordSnapForCode: false,
-    disableWordSnappingOnCtrlKey: true,
-    dontSnapTextfieldSelection: true,
-    dragHandleStyle: "circle",
-    draggableTooltip: true,
-    enabled: true,
-    enableMultiCopyStack: true,
-    multiCopySeparator: "doubleNewline",
-    excludedDomains: "",
-    floatingOffscreenTooltip: true,
-    fontSize: 12.5,
-    fullOpacityOnHover: true,
-    hideOnKeypress: true,
-    hideOnScroll: true,
-    hideTooltipOnActionButtonClick: true,
-    hideTooltipOnContextMenuOpen: true,
-    hideTooltipWhenCursorMovesAway: false,
-    hideTranslateButtonForUserLanguage: true,
-    invertColorOnDarkWebsite: true,
-    languageToTranslate: (navigator.language || navigator.userLanguage || "en").split('-')[0],
-    leftClickBackgroundTab: false,
-    liveTranslation: true,
-    maxIconsInRow: 5,
-    maxMarkerPagesToStore: 10,
-    maxTooltipButtonsToShow: 3,
-    middleClickHidesTooltip: false,
-    performSimpleMathOperations: false,
-    preferCurrencySymbol: false,
-    preferredMapsService: "google",
-    preferredMetricsSystem: "metric",
-    preferredNewEmailMethod: "mailto",
-    preferredSearchEngine: "google",
-    preferredTranslateService: "google",
-    ratesLastFetchedDate: "",
-    recreateTooltipAfterScroll: true,
-    removeSelectionOnActionButtonClick: true,
-    secondaryTooltipEnabled: true,
-    secondaryTooltipIconSize: 16,
-    secondaryTooltipLayout: "verticalLayout",
-    shadowOpacity: 0.5,
-    shiftTooltipWhenWebsiteHasOwn: false,
-    shouldOverrideWebsiteSelectionColor: false,
-    showButtonBorders: true,
-    showButtonLabelOnHover: true,
-    showDictionaryButton: true,
-    showDotForHoverButtons: true,
-    showEmailButton: true,
-    showInfoPanel: true,
-    showOnMapButtonEnabled: true,
-    showPasteContentPreview: false,
-    showSecondaryTooltipTitleOnHover: false,
-    showStatsOnCopyButtonHover: true,
-    showTooltipArrow: true,
-    showTranslateButton: true,
-    showTranslateIfLanguageUnknown: true,
-    showUnconvertedValue: false,
-    showUpdateNotification: true,
-    snapSelectionToWord: true,
-    textSelectionBackground: "#338FFF",
-    textSelectionBackgroundOpacity: 1,
-    textSelectionColor: "#ffffff",
-    tooltipBackground: "#333232",
-    tooltipInvertedBackground: "#bfbfbf",
-    tooltipOpacity: 1,
-    tooltipPosition: "overCursor",
-    tooltipRevealEffect: "moveUpTooltipEffect",
-    translateSingleWordsImmediately: false,
-    updateRatesEveryDays: 7,
-    useCustomStyle: false,
-    verticalLayoutTooltip: false,
-    wordSnappingBlacklist: ""
-};
-
-const CURRENCIES = {
-    AUD: { name: "Australian Dollar", symbol: "A$", rate: 1.29009 },
-    BGN: { name: "Bulgarian Lev", symbol: "лв", rate: 1.640562 },
-    BRL: { name: "Brazilian real", symbol: "R$", rate: 5.616101 },
-    BYN: { name: "Belarussian Ruble", rate: 2.596137 },
-    CAD: { name: "Canadian Dollar", symbol: "C$", rate: 1.269384 },
-    CHF: { name: "Swiss Franc", symbol: "CHF", rate: 0.926525 },
-    CNY: { name: "Chinese Yuan", symbol: "¥", rate: 6.497301 },
-    CRC: { name: "Costa Rican Colon", symbol: "₡", rate: 610.339772 },
-    CZK: { name: "Czech Koruna", symbol: "Kč", rate: 21.936455 },
-    DKK: { name: "Danish Krone", symbol: " kr", rate: 6.229502 },
-    EUR: { name: "Euro", symbol: "€", rate: 0.8378 },
-    GBP: { name: "British Pound", symbol: "£", rate: 0.721124 },
-    HKD: { name: "Hong Kong dollar", symbol: "HK$", rate: 7.765632 },
-    HUF: { name: "Hungarian forint", rate: 316.005504 },
-    IDR: { name: "Indonesian Rupiah", symbol: "Rp", rate: 15711.86182839 },
-    ILS: { name: "Israeli New Sheqel", symbol: "₪", rate: 3.310401 },
-    INR: { name: "Indian Rupee", symbol: "₹", rate: 72.452006 },
-    IRR: { name: "Iranian Rial", symbol: "﷼", rate: 42105.017329 },
-    JPY: { name: "Japanese Yen", symbol: "¥", rate: 109.188027 },
-    KRW: { name: "South Korean Won", symbol: "₩", rate: 1193.057307 },
-    KPW: { name: "North Korean Won", symbol: "₩", rate: 900.00022 },
-    KZT: { name: "Kazakhstani Tenge", symbol: "₸", rate: 418.821319 },
-    MNT: { name: "Mongolian Tugrik", symbol: "₮", rate: 2849.930035 },
-    MXN: { name: "Mexican Peso", symbol: "peso", rate: 20.655212 },
-    MYR: { name: "Malaysian Ringgit", symbol: "RM", rate: 4.208613 },
-    NGN: { name: "Nigerian Naira", symbol: "₦", rate: 410.317377 },
-    NOK: { name: "Norwegian Krone", symbol: " kr", rate: 8.51191 },
-    PHP: { name: "Philippine Peso", symbol: "₱", rate: 56.012 },
-    PLN: { name: "Polish złoty", symbol: "zł", rate: 3.845051 },
-    RON: { name: "Romanian leu", symbol: "leu", rate: 5.058587 },
-    RUB: { name: "Russian Ruble", symbol: "₽", rate: 72.880818 },
-    SAR: { name: "Saudi Riyal", symbol: "﷼", rate: 3.750694 },
-    SEK: { name: "Swedish Krona", symbol: " kr", rate: 8.514027 },
-    THB: { name: "Thai Baht", symbol: "฿", rate: 34.700854 },
-    TRY: { name: "Turkish Lira", symbol: "₺", rate: 0.14 },
-    TWD: { name: "New Taiwan dollar", symbol: "NT$", rate: 31.99368752 },
-    UAH: { name: "Ukrainian Hryvnia", symbol: "₴", rate: 27.852288 },
-    USD: { name: "United States Dollar", symbol: "$", rate: 1 },
-    VND: { name: "Vietnamese Dong", symbol: "₫", rate: 23054.385489 },
-    ZAR: { name: "Rand", rate: 14.856969 },
-    BTC: { name: "Bitcoin", rate: 18e-6, symbol: "₿" },
-    ETH: { name: "Ethereum", rate: 3208e-7 },
-    LTC: { name: "Litecoin", rate: 0.006242 },
-    ADA: { name: "Cardano", rate: 0.4492 },
-};
 
 let customSearchButtonsList = [];
 
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Selecton: DOMContentLoaded event fired");
     
-    // Load settings from storage and merge with defaults
     chrome.storage.local.get(null, (storedItems) => {
         console.log("Selecton: Storage loaded", Object.keys(storedItems).length, "items");
         
         const mergedConfigs = Object.assign({}, DEFAULT_CONFIGS, storedItems);
         
         console.log("Selecton: Configs initialized");
-        initializePopup(storedItems, mergedConfigs);
+        initializePopup(mergedConfigs);
     });
 });
 
-function initializePopup(items, configs) {
+function initializePopup(configs) {
     console.log("Selecton: Initializing popup UI");
     
     document.getElementById('selecton-settings-label').innerHTML = 
@@ -221,29 +55,34 @@ function initializePopup(items, configs) {
     // Load and bind settings
     const inputs = document.querySelectorAll('input:not([type="file"]), select');
 
-    // Load saved values into inputs
+    // Load values from mergedConfigs into the UI
     inputs.forEach(input => {
-        if (input.id && items[input.id] !== undefined) {
+        const valueToSet = configs[input.id]; 
+
+        if (input.id && valueToSet !== undefined) {
             if (input.type === 'checkbox') {
-                input.checked = items[input.id];
+                input.checked = valueToSet;
             } else {
-                input.value = items[input.id];
+                input.value = valueToSet;
             }
         }
     });
 
     // Initialize currency dropdown
-    setCurrenciesDropdown(items.convertToCurrency, CURRENCIES);
+    setCurrenciesDropdown(configs.convertToCurrency, CURRENCIES);
 
     // Load Custom Search Buttons
-    customSearchButtonsList = items.customSearchButtons || configs.customSearchButtons || [];
+    customSearchButtonsList = configs.customSearchButtons || [];
     renderCustomSearchButtons();
 
     // Load Website Markers
-    renderWebsiteMarkers(items.websiteMarkers);
+    renderWebsiteMarkers(configs.websiteMarkers);
 
-    // Update UI dependencies
-    updateDisabledOptions();
+    // Update UI dependencies after a frame to ensure DOM is ready
+    requestAnimationFrame(() => {
+        updateDisabledOptions();
+        updateExcludeButton();
+    });
 
     // Save settings on change
     inputs.forEach(input => {
@@ -264,6 +103,55 @@ function initializePopup(items, configs) {
         });
     });
 
+    // Initialize Exclude Current Domain button
+    const excludeCurrentBtn = document.getElementById('excludeCurrentDomain');
+    if (excludeCurrentBtn) {
+        excludeCurrentBtn.onclick = () => {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs[0]?.url) {
+                    try {
+                        const url = new URL(tabs[0].url);
+                        const domain = url.hostname;
+                        
+                        chrome.storage.local.get(['excludedDomains'], (result) => {
+                            let excluded = result.excludedDomains || '';
+                            const domains = excluded.split(',').map(d => d.trim()).filter(d => d);
+                            
+                            const index = domains.indexOf(domain);
+                            if (index === -1) {
+                                // Add to exclusion
+                                domains.push(domain);
+                                const newExcluded = domains.join(', ');
+                                chrome.storage.local.set({ excludedDomains: newExcluded }, () => {
+                                    updateExcludeButton();
+                                });
+                            } else {
+                                // Remove from exclusion
+                                domains.splice(index, 1);
+                                const newExcluded = domains.join(', ');
+                                chrome.storage.local.set({ excludedDomains: newExcluded }, () => {
+                                    updateExcludeButton();
+                                });
+                            }
+                        });
+                    } catch (e) {
+                        excludeCurrentBtn.textContent = 'Cannot exclude this page';
+                        excludeCurrentBtn.disabled = true;
+                    }
+                }
+            });
+        };
+    }
+
+    // Update exclude button when tabs change
+    chrome.tabs.onActivated.addListener(() => {
+        updateExcludeButton();
+    });
+    
+    chrome.tabs.onUpdated.addListener(() => {
+        updateExcludeButton();
+    });
+
     // Display version
     const versionEl = document.getElementById('selecton-version');
     if (versionEl) {
@@ -271,9 +159,9 @@ function initializePopup(items, configs) {
     }
 
     // Initialize Import/Export
-    setupImportExport(configs);
+    setupImportExport();
 
-    // Initialize Reset Button
+    // Display version
     const resetBtn = document.getElementById('resetDefaults');
     if (resetBtn) {
         resetBtn.onclick = () => {
@@ -292,6 +180,7 @@ function initializePopup(items, configs) {
 
 function updateDisabledOptions() {
     const elements = {
+        enabled: document.getElementById("enabled"),
         convertCurrencies: document.getElementById("convertCurrencies"),
         convertMetrics: document.getElementById("convertMetrics"),
         showTranslateButton: document.getElementById("showTranslateButton"),
@@ -309,19 +198,32 @@ function updateDisabledOptions() {
         secondaryTooltipEnabled: document.getElementById("secondaryTooltipEnabled"),
         secondaryTooltipLayout: document.getElementById("secondaryTooltipLayout"),
     };
-
     const toggle = (id, condition) => {
         const el = document.getElementById(id);
         if (!el) return;
         const container = el.closest('.option, .child-option, #customStylesSection') || el;
         container.classList.toggle('hidden-option', !condition);
+
+        // Update accordion height after toggle
+        const content = el.closest('.collapsible-content');
+        if (content && content.style.maxHeight) {
+            requestAnimationFrame(() => {
+                content.style.maxHeight = content.scrollHeight + "px";
+            });
+        }
     };
+
+    // Hide all content when extension is disabled
+    const extensionEnabled = elements.enabled?.checked;
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.style.display = extensionEnabled ? 'block' : 'none';
+    }
 
     toggle("convertToCurrency", elements.convertCurrencies?.checked);
     toggle("preferredMetricsSystem", elements.convertMetrics?.checked);
     
     const showTranslate = elements.showTranslateButton?.checked;
-    toggle("preferredTranslateService", showTranslate);
     toggle("languageToTranslate", showTranslate);
     toggle("liveTranslation", showTranslate);
 
@@ -386,7 +288,7 @@ function setCurrenciesDropdown(savedValue, currencies) {
     });
 }
 
-function setupImportExport(configs) {
+function setupImportExport() {
     const exportBtn = document.getElementById('exportSettings');
     if (exportBtn) {
         exportBtn.onclick = function () {
@@ -428,6 +330,41 @@ function setupImportExport(configs) {
             reader.readAsText(file);
         });
     }
+}
+
+function updateExcludeButton() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const btn = document.getElementById('excludeCurrentDomain');
+        if (!btn) return;
+
+        if (!tabs[0]?.url) {
+            btn.textContent = 'No active tab';
+            btn.disabled = true;
+            return;
+        }
+
+        try {
+            const url = new URL(tabs[0].url);
+            const domain = url.hostname;
+
+            chrome.storage.local.get(['excludedDomains'], (result) => {
+                let excluded = result.excludedDomains || '';
+                const domains = excluded.split(',').map(d => d.trim()).filter(d => d);
+                
+                if (domains.includes(domain)) {
+                    btn.textContent = `✓ ${domain} (Click to include)`;
+                    btn.style.backgroundColor = '#28a745';
+                } else {
+                    btn.textContent = `Exclude ${domain}`;
+                    btn.style.backgroundColor = '#0078d4';
+                }
+                btn.disabled = false;
+            });
+        } catch (e) {
+            btn.textContent = 'Cannot exclude this page';
+            btn.disabled = true;
+        }
+    });
 }
 
 function renderCustomSearchButtons() {

@@ -1,6 +1,10 @@
 function addContextualButtons(callbackOnFinish) {
     if (configs.debugMode)
         console.log('Checking to add contextual buttons...');
+    
+    if (configs.debugMode) console.log('configs object:', configs);
+    if (configs.debugMode) console.log('selectedText:', JSON.stringify(selectedText));
+    if (configs.debugMode) console.log('showSpeakButton:', configs.showSpeakButton);
 
     if (selection == null) return;
 
@@ -385,6 +389,100 @@ function addContextualButtons(callbackOnFinish) {
                 } catch (error) {
                     console.log(error);
                 }
+        }
+
+        /// Add read aloud button
+        if (configs.debugMode) console.log('Read aloud check - showSpeakButton:', configs.showSpeakButton);
+        if (configs.debugMode) console.log('Read aloud check - selectedText:', JSON.stringify(selectedText));
+        if (configs.debugMode) console.log('Read aloud check - trimmed length:', selectedText.trim().length);
+        
+        if (configs.showSpeakButton && selectedText.trim().length > 0) {
+            if (configs.debugMode) console.log('Read aloud config:', configs.showSpeakButton);
+            if (configs.debugMode) console.log('Adding read aloud button for:', selectedText);
+            const speakButton = addContextualTooltipButton(function (e) {
+                const textToSpeak = selectedText.trim();
+                
+                // Stop any current speech
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                
+                // Create new speech utterance
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                
+                // Configure speech settings
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                // Find preferred voice (try to use English or browser default)
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    // Try to find English voice first
+                    const englishVoice = voices.find(voice => 
+                        voice.lang.startsWith('en-') || voice.lang === 'en'
+                    );
+                    utterance.voice = englishVoice || voices[0];
+                }
+                
+                // Handle speech events
+                utterance.onstart = function() {
+                    if (configs.debugMode) console.log('Speech started');
+                };
+                
+                utterance.onend = function() {
+                    if (configs.debugMode) console.log('Speech ended');
+                };
+                
+                utterance.onerror = function(event) {
+                    if (configs.debugMode) console.log('Speech error:', event.error);
+                    // Show error notification
+                    const notification = document.createElement('div');
+                    notification.textContent = 'Speech synthesis not available';
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #d9534f;
+                        color: white;
+                        padding: 10px 15px;
+                        border-radius: 4px;
+                        z-index: 10000;
+                        font-size: 14px;
+                    `;
+                    document.body.appendChild(notification);
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 3000);
+                };
+                
+                // Start speaking
+                window.speechSynthesis.speak(utterance);
+            });
+
+            // Set button appearance based on style
+            if (configs.buttonsStyle == 'onlylabel') {
+                speakButton.textContent = 'Read Aloud';
+            } else {
+                speakButton.appendChild(createImageIconForButton(speakButtonIcon, configs.buttonsStyle == 'onlyicon' ? '' : 'Read Aloud', true));
+            }
+            
+            // Add visual indicator when speaking
+            const originalOnStart = utterance.onstart;
+            utterance.onstart = function() {
+                originalOnStart();
+                speakButton.style.background = 'var(--selection-button-background-active)';
+                speakButton.style.color = 'var(--selection-button-foreground-active)';
+            };
+            
+            const originalOnEnd = utterance.onend;
+            utterance.onend = function() {
+                originalOnEnd();
+                speakButton.style.background = '';
+                speakButton.style.color = '';
+            };
         }
 
         /// Add HEX color preview button

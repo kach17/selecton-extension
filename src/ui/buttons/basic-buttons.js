@@ -182,5 +182,48 @@ function addBasicTooltipButtons(layout) {
             //     hideTooltip();
             // }
         });
+
+        /// Add share button
+        if (configs.showShareButton) {
+            addBasicTooltipButton('Share', shareButtonIcon, function() {
+                const selectedText = selection.toString().trim();
+                if (selectedText) {
+                    if (navigator.share) {
+                        // Use Web Share API if available
+                        navigator.share({
+                            title: 'Shared from Selecton',
+                            text: selectedText
+                        }).catch(err => {
+                            if (configs.debugMode) console.log('Share failed:', err);
+                            // Fallback to copying to clipboard
+                            copyManuallyToClipboard(selectedText);
+                        });
+                    } else {
+                        // Fallback: copy to clipboard and show notification
+                        copyManuallyToClipboard(selectedText);
+                        // Show a brief notification that text was copied
+                        const notification = document.createElement('div');
+                        notification.textContent = 'Text copied to clipboard (share not supported)';
+                        notification.style.cssText = `
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: #333;
+                            color: white;
+                            padding: 10px 15px;
+                            border-radius: 4px;
+                            z-index: 10000;
+                            font-size: 14px;
+                        `;
+                        document.body.appendChild(notification);
+                        setTimeout(() => {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 3000);
+                    }
+                }
+            });
+        }
     }
 }

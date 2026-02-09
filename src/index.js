@@ -88,12 +88,6 @@ function initConfigs(callback) {
           });
 
 
-        // /// Set CSS rules for tooltip style
-        // setDocumentStyles();
-
-        // /// Fetch or load currency rates from storage
-        // loadCurrencyRates()
-
         if (callback) callback();
       }
     });

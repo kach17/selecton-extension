@@ -1,17 +1,19 @@
+/* Box-sizing fix for consistent width */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 /* --- Header Styles --- */
 #selecton-settings-label {
-    display: inline; font-size: 18px;vertical-align: middle; color: grey; 
+    font-size: 18px;
+    color: grey;
+    flex: 1;
 }
 
 .circleButton {
     opacity: 0.8;
     border-radius: 50%;
     padding: 3px;
-    margin-left: 3px;
-}
-
-.float {
-    float: right;
 }
 
 .circleButton:hover{
@@ -20,12 +22,15 @@
 }
 
 #popup-header {
-    padding: 6px; border-bottom: 1px solid lightGrey; vertical-align: bottom;
-    height: 25px;
+    padding: 10px;
+    border-bottom: 1px solid lightGrey;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 #headerLogo {
-    display: inline; vertical-align: middle;
+    flex-shrink: 0;
 }
 
 @-moz-document url-prefix() {
@@ -49,13 +54,12 @@ html {
 
 body {
   margin: 0 auto;
-  max-width: 600px;
-  /* Padding handled in options-container to preserve header width */
+  width: 450px;
   font-family: "Segoe UI", Tahoma, sans-serif;
   font-size: 14px;
   color: #333;
-  min-width: 400px;
   background-color: #ffffff;
+  overflow-x: hidden;
 }
 
 .options-container {
@@ -113,6 +117,7 @@ select {
   border-radius: 4px;
   font-size: 13px;
   outline: none;
+  max-width: 200px;
 }
 
 input[type="text"]:focus,
@@ -184,7 +189,8 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 15px;
-  width: 200px;
+  max-width: 200px;
+  width: 100%;
 }
 
 .slider-container input[type=range] {

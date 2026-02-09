@@ -17,13 +17,7 @@
       "matches": ["<all_urls>"]
     }
   ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "selection_action@emvaized.com"
-    }
-  },
   "background": {
-    "scripts": ["background.js"],
     "service_worker": "background.js"
   },
   "content_scripts": [
@@ -41,10 +35,6 @@
       "all_frames": true
     }
   ],
-  "options_ui": {
-    "page": "options/options.html",
-    "open_in_tab": false
-  },
   "action": {
     "default_icon": "assets/icons/logo-new.png",
     "default_title": "Selecton",

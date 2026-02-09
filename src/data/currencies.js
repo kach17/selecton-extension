@@ -53,3 +53,8 @@ const currenciesList = {
     ZCL: { name: "XMR", rate: 7.348, crypto: true },
     DOGE: { name: "DOGE", rate: 4.537, crypto: true }
 };
+
+// Export for Webpack (popup.js)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = currenciesList;
+}

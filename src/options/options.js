@@ -1,1 +1,0 @@
-// This file is deprecated. All settings logic has been moved to src/popup/popup.js.

@@ -37,24 +37,11 @@ module.exports = {
         {
           from: "src/manifest.json",
           to: "manifest.json",
-          transform(content) {
-            const manifest = JSON.parse(content.toString());
-            if (manifest.manifest_version === 3) {
-              if (manifest.background && manifest.background.scripts) {
-                manifest.background.service_worker = "background.js";
-                delete manifest.background.scripts;
-                delete manifest.background.persistent;
-              }
-              delete manifest.browser_specific_settings;
-            }
-            return JSON.stringify(manifest, null, 2);
-          }
         },
         "src/index.css",
         { from: "src/_locales", to: "_locales" },
         { from: "src/assets", to: "assets" },
         { from: "src/popup", to: "popup", globOptions: { ignore: ["**/popup.js"] } },
-        { from: "src/options", to: "options" },
       ],
     }),
   ],

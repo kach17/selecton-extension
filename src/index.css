@@ -13,8 +13,8 @@
   z-index: 100001 !important;
   /* max-height: 24px !important; */
   margin: 0px !important;
-  line-height: 1.0 !important;
-  box-sizing: unset !important;
+  line-height: 1.2 !important;
+  box-sizing: border-box !important;
   border: 0.25px solid var(--selecton-outline-color);
   min-width: fit-content !important;
   white-space: nowrap !important;
@@ -131,11 +131,11 @@
 
 /* Clip content in buttons with hover panels */
 .button-with-top-hover-panel {
-  clip-path: polygon(-2000% -2000%, 2000% -2000%, 2000% 100%, -2000% 100%) !important;
+  /* clip-path: polygon(-2000% -2000%, 2000% -2000%, 2000% 100%, -2000% 100%) !important; */
 }
 
 .button-with-bottom-hover-panel {
-  clip-path: polygon(-2000% 0%, 2000% 0%, 2000% 2000%, -2000% 2000%) !important;
+  /* clip-path: polygon(-2000% 0%, 2000% 0%, 2000% 2000%, -2000% 2000%) !important; */
 }
 
 .hover-vertical-tooltip {
@@ -319,7 +319,15 @@
   opacity: 0.4;
 }
 
-/* Marker */
+/* ===== MARKER STYLES - MINIMAL (Let JavaScript handle everything) ===== */
+
+/* CRITICAL: Don't set background-color or color here - let inline styles work */
+.selecton-marker-highlight {
+  /* All styling is done via inline styles in JavaScript */
+  /* This prevents CSS from overriding with !important */
+}
+
+/* Scrollbar hint indicator */
 .marker-scrollbar-hint {
   position: fixed;
   right: 1px;
@@ -367,29 +375,23 @@
   transition-delay: 100ms;
 }
 
-/* Marker delete button */
-.marker-highlight-delete {
+/* Marker delete button - FLOATING VERSION */
+.marker-highlight-delete-floating {
   position: absolute;
-  top: -20px;
-  right: -20px;
   background: #555;
   color: white;
-  border-radius: 2px;
+  border-radius: 3px;
   border: 1px solid lightgray;
-  z-index: 999999999999 !important;
-  opacity: 0;
+  z-index: 999999999 !important;
   font-size: 14px;
-  transition: opacity 200ms;
-  padding: 0px 4px;
+  padding: 2px 6px;
   cursor: pointer;
   font-style: normal !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: background 150ms;
 }
 
-.selecton-marker-highlight:hover .marker-highlight-delete {
-  opacity: 0.85;
-}
-
-.marker-highlight-delete:hover {
+.marker-highlight-delete-floating:hover {
   background: red;
 }
 

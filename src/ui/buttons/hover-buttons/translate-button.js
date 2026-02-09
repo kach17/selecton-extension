@@ -1,88 +1,65 @@
-function addTranslateButton(onFinish, selectionLength, wordsCount) {
+async function addTranslateButton(onFinish, selectionLength, wordsCount) {
     try {
-        if (!chrome.i18n.detectLanguage) proccessButton(true);
-        else
-            chrome.i18n.detectLanguage(selectedText, function (result) {
-                if (configs.debugMode)
-                    console.log('Checking if its needed to add Translate button...');
+        if (!chrome.i18n.detectLanguage) {
+            processButton(true);
+            return;
+        }
 
-                /// Show Translate button when language was not detected
-                let shouldTranslate = false;
+        chrome.i18n.detectLanguage(selectedText, (result) => {
+            if (configs.debugMode) console.log('Checking translation necessity...');
 
-                if (configs.debugMode)
-                    console.log(`User language is: ${configs.languageToTranslate}`);
+            let shouldTranslate = false;
+            let languageOfSelectedText = result?.languages?.[0]?.language;
 
-                let detectedLanguages = result;
-                let languageOfSelectedText;
+            if (languageOfSelectedText) {
+                if (configs.debugMode) console.log(`Detected: ${languageOfSelectedText}`);
 
-                if (detectedLanguages !== null && detectedLanguages !== undefined) {
-                    const langs = detectedLanguages.languages;
-
-                    if (langs.length > 0) {
-                        languageOfSelectedText = langs[0].language;
-                        if (configs.debugMode) console.log('Detected language: ' + languageOfSelectedText);
-
-                        /// Show detected language on info panel
-                        if (configs.showInfoPanel && detectedLanguages.isReliable && !configs.verticalLayoutTooltip)
-                            setTimeout(function () {
-                                if (infoPanel && infoPanel.isConnected) {
-                                    infoPanel.innerText += ' · ' + languageOfSelectedText;
-                                    // let languageNames = new Intl.DisplayNames([configs.languageToTranslate], { type: 'language' });
-                                    // infoPanel.innerText += ' · ' + languageNames.of(languageOfSelectedText);
-                                }
-                            }, 5)
-
-                        // if (configs.debugMode)
-                        //     console.log(`Detection is reliable: ${detectedLanguages.isReliable}`);
-
-                        /// Don't show translate button if selected language is the same as desired
-                        if (languageOfSelectedText == configs.languageToTranslate && configs.hideTranslateButtonForUserLanguage)
-                            shouldTranslate = false;
-                        else shouldTranslate = true;
-                    } else {
-                        if (configs.debugMode) console.log('Selecton failed to detect language of selected text');
-                        shouldTranslate = configs.showTranslateIfLanguageUnknown ?? false;
-                    }
-                } else {
-                    if (configs.debugMode) console.log('Selecton failed to detect language of selected text');
-                    shouldTranslate = configs.showTranslateIfLanguageUnknown ?? false;
+                // Update Info Panel with detected language
+                if (configs.showInfoPanel && result.isReliable && !configs.verticalLayoutTooltip) {
+                    setTimeout(() => {
+                        if (infoPanel?.isConnected) {
+                            infoPanel.innerText += ` · ${languageOfSelectedText}`;
+                        }
+                    }, 5);
                 }
 
-                if (configs.debugMode)
-                    console.log(`Should translate: ${shouldTranslate}`);
+                // Logic: Translate if language differs OR if user wants it anyway
+                const isUserLang = languageOfSelectedText === configs.languageToTranslate;
+                shouldTranslate = isUserLang ? !configs.hideTranslateButtonForUserLanguage : true;
+            } else {
+                if (configs.debugMode) console.log('Detection failed');
+                shouldTranslate = configs.showTranslateIfLanguageUnknown ?? false;
+            }
 
-                proccessButton(shouldTranslate, languageOfSelectedText);
-
-            });
+            processButton(shouldTranslate, languageOfSelectedText);
+        });
     } catch (e) {
-        if (configs.debugMode)
-            console.log(e);
+        if (configs.debugMode) console.error(e);
     }
 
-    function proccessButton(shouldTranslate, languageOfSelectedText) {
-        if (shouldTranslate == true) {
+    function processButton(shouldTranslate, languageOfSelectedText) {
+        if (shouldTranslate) {
             setRegularTranslateButton(languageOfSelectedText, selectionLength, wordsCount);
         }
-        if (onFinish) onFinish();
+        onFinish?.();
     }
 }
 
-
 function setRegularTranslateButton(languageOfSelectedText, selectionLength, wordsCount) {
-
-    const translateUrl = languageOfSelectedText == configs.languageToTranslate && !configs.hideTranslateButtonForUserLanguage ?
-            returnTranslateUrl(selectedText, 'en', languageOfSelectedText) :
-            returnTranslateUrl(selectedText, configs.languageToTranslate, languageOfSelectedText);
+    const isUserLang = languageOfSelectedText === configs.languageToTranslate;
+    const targetLang = (isUserLang && !configs.hideTranslateButtonForUserLanguage) ? 'en' : configs.languageToTranslate;
+    
+    const translateUrl = returnTranslateUrl(selectedText, targetLang, languageOfSelectedText);
     const translateButton = addLinkTooltipButton(translateLabel, translateButtonIcon, translateUrl);
 
-    translateButton.setAttribute('id', 'selecton-translate-button');
+    translateButton.id = 'selecton-translate-button';
 
-    /// set live tranlsation listeners
-    // if (configs.liveTranslation && configs.preferredTranslateService == 'google' && selectedText.length < 500) {
+    // Live Translation Trigger
     if (configs.liveTranslation && selectionLength < 500) {
-        setTimeout(function () {
-            if (configs.translateSingleWordsImmediately && wordsCount == 1 && !/[:\/"'']/.test(selectedText)) {
-                fetchTranslation(selectedText, 'auto', configs.languageToTranslate, undefined, translateButton, true)
+        setTimeout(() => {
+            const isSingleWord = wordsCount === 1 && !/[:\/"'']/.test(selectedText);
+            if (configs.translateSingleWordsImmediately && isSingleWord) {
+                fetchTranslation(selectedText, 'auto', configs.languageToTranslate, null, translateButton, true);
             } else {
                 setLiveTranslateOnHoverButton(selectedText, 'auto', configs.languageToTranslate, translateButton);
             }
@@ -92,136 +69,82 @@ function setRegularTranslateButton(languageOfSelectedText, selectionLength, word
 
 function setLiveTranslateOnHoverButton(word, sourceLang, targetLang, translateButton) {
     let fetched = false;
-    let liveTranslationPanel = createHoverPanelForButton(translateButton, `${chrome.i18n.getMessage("translating") ?? 'Translating'}...`, onShow);
-    translateButton.appendChild(liveTranslationPanel);
-
-    function onShow() {
-        if (fetched == false) {
-            /// Fetch definition from Google Translate
+    const loadingMsg = chrome.i18n.getMessage("translating") || 'Translating';
+    const liveTranslationPanel = createHoverPanelForButton(translateButton, `${loadingMsg}...`, () => {
+        if (!fetched) {
             fetched = true;
-            fetchTranslation(word, sourceLang, targetLang, liveTranslationPanel, translateButton)
+            fetchTranslation(word, sourceLang, targetLang, liveTranslationPanel, translateButton);
         }
+    });
+    translateButton.appendChild(liveTranslationPanel);
+}
+
+/**
+ * Refined CSS Injection Logic
+ * Improves the visual transition between the loading state and the result.
+ */
+function renderHoverPanelContent(panel, text, originLang) {
+    panel.innerHTML = ''; // Clear "Translating..." text safely
+    panel.style.padding = '0';
+
+    const header = document.createElement('span');
+    header.className = 'selecton-hover-panel-header';
+    // Use Intl.DisplayNames if you want the full language name instead of the code (e.g., "en" -> "English")
+    header.textContent = `Google Translate${originLang ? ` · ${originLang.toUpperCase()}` : ''}`;
+
+    const body = document.createElement('div');
+    body.className = 'selecton-hover-panel-container selecton-live-translation';
+    body.innerText = text;
+
+    // Handle layout based on tooltip position
+    if (window.tooltipOnBottom) {
+        header.style.paddingBottom = '2px';
+        body.style.marginTop = '3px';
+        panel.append(body, header);
+    } else {
+        panel.append(header, body);
     }
 }
 
+/**
+ * Enhanced Fetch with Timeout
+ * Prevents the "Translating..." message from hanging indefinitely.
+ */
 async function fetchTranslation(word, sourceLang, targetLang, liveTranslationPanel, translateButton, showResultInButton = false) {
-    // let maxLengthForResult = 100;
-    let noTranslationLabel = chrome.i18n.getMessage("noTranslationFound");
-
+    const noTranslationLabel = chrome.i18n.getMessage("noTranslationFound") || "No translation found";
     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&dt=bd&dj=1&q=${encodeURIComponent(word)}`;
-    // const xhr = new XMLHttpRequest();
-    // xhr.responseType = "json";
-    // xhr.open("GET", url);
-    // xhr.send();
 
-    // let result = await new Promise((resolve, reject) => {
-    //     xhr.onload = () => {
-    //         resolve(xhr);
-    //     };
-    //     xhr.onerror = () => {
-    //         resolve(xhr);
-    //     };
-    // });
-
-    chrome.runtime.sendMessage({ type: 'background_fetch', url: url }, (response) => {
-        let result = response;
-
-        if (configs.debugMode) {
-            console.log('Response from Google Translate:');
-            console.log(result);
-        }
-    
-        if (!result) {
-            liveTranslationPanel.innerText = noTranslationLabel;
-            return;
-        }
-    
-        let resultOfLiveTranslation;
-        let originLanguage;
-    
-        try {
-            resultOfLiveTranslation = result.dict[0].terms[0];
-        } catch (e) {
-            // resultOfLiveTranslation = result.response.sentences[0].trans;
-            resultOfLiveTranslation = '';
-            result.sentences.forEach(function (sentenceObj) {
-                resultOfLiveTranslation += sentenceObj.trans;
-            })
-        }
-    
-        try {
-            originLanguage = result.src;
-        } catch (e) { }
-    
-        /// Set translation view
-        if (resultOfLiveTranslation !== null && resultOfLiveTranslation !== undefined && resultOfLiveTranslation !== '' && resultOfLiveTranslation.replaceAll(' ', '') !== word.replaceAll(' ', '')) {
-            // if (resultOfLiveTranslation.length > maxLengthForResult)
-            //     resultOfLiveTranslation = resultOfLiveTranslation.substring(0, maxLengthForResult - 3) + '...';
-
-            if (showResultInButton){
-                let span = translateButton.querySelector('span');
-                if (!span) span = translateButton
-                span.innerText = resultOfLiveTranslation;
-                span.classList.add('selecton-live-translation');
-                translateButton.title = 'Source: Google Translate';
-            } else {
-                liveTranslationPanel.innerText = '';
-
-                const title = document.createElement('span');
-                title.textContent = 'Google Translate';
-                title.className = 'selecton-hover-panel-header';
-                if(!tooltipOnBottom) {
-                    liveTranslationPanel.appendChild(title);
-                } 
-
-                let container = document.createElement('div');
-                container.className = 'selecton-hover-panel-container';
-                // container.style.padding = '2px';
-                // container.style.position = 'relative';
-
-                container.innerText = resultOfLiveTranslation;
-                container.classList.add('selecton-live-translation');
-                liveTranslationPanel.appendChild(container);
-                liveTranslationPanel.style.padding = '0';
-                if(tooltipOnBottom) {
-                    title.style.paddingBottom = '2px';
-                    container.style.marginTop = '3px';
-                    container.style.marginBottom = '0px';
-                    liveTranslationPanel.appendChild(title);
-                }
-
-                /// Create origin language label
-                if (originLanguage !== null && originLanguage !== undefined && originLanguage !== '') {
-                    title.textContent += ` · ${originLanguage}`;
-                }
-            }
-    
-            // setTimeout(function () {
-            //     /// check if panel goes off-screen on top
-            //     checkHoverPanelToOverflowOnTop(liveTranslationPanel);
-            // }, 3);
-    
-            /// Create origin language label
-            // let originLabelWidth = configs.fontSize / 1.5;
-            // let originLabelPadding = 3.5;
-            // let langLabel;
-            // if (originLanguage !== null && originLanguage !== undefined && originLanguage !== '') {
-            //     langLabel = document.createElement('span');
-            //     langLabel.textContent = originLanguage;
-            //     // langLabel.setAttribute('style', `opacity: 0.7; position: relative; right: -${originLabelPadding}px; bottom: -2.5px; font-size: ${originLabelWidth}px;color: var(--selection-button-foreground) !important`)
-            //     langLabel.setAttribute('style', `opacity: 0.7; position: absolute; right: 1px; bottom: 1px; font-size: ${originLabelWidth}px;color: var(--selection-button-foreground) !important`)
-                
-            //     if (showResultInButton){
-            //         translateButton.appendChild(langLabel);
-            //     } else {
-            //         // liveTranslationPanel.appendChild(langLabel);
-            //         container.appendChild(langLabel);
-            //     }
-            // }
-        } else {
-            /// no translation found
-            liveTranslationPanel.innerHTML = noTranslationLabel;
-        }
+    // Set a safety timeout for the background message
+    const fetchPromise = new Promise((resolve) => {
+        chrome.runtime.sendMessage({ type: 'background_fetch', url: url }, resolve);
+        setTimeout(() => resolve(null), 5000); // 5s timeout
     });
 
+    const result = await fetchPromise;
+
+    if (!result) {
+        if (liveTranslationPanel) liveTranslationPanel.innerText = noTranslationLabel;
+        return;
+    }
+
+    // Extract translation using modern optional chaining and coalescing
+    const translatedText = result.dict?.[0]?.terms?.[0] || 
+                         result.sentences?.map(s => s.trans).filter(Boolean).join("") || 
+                         "";
+
+    const isDuplicate = translatedText.toLowerCase().trim() === word.toLowerCase().trim();
+
+    if (!translatedText || isDuplicate) {
+        if (liveTranslationPanel) liveTranslationPanel.innerText = noTranslationLabel;
+        return;
+    }
+
+    if (showResultInButton) {
+        const target = translateButton.querySelector('span') || translateButton;
+        target.innerText = translatedText;
+        target.classList.add('selecton-live-translation');
+        translateButton.title = 'Source: Google Translate';
+    } else if (liveTranslationPanel) {
+        renderHoverPanelContent(liveTranslationPanel, translatedText, result.src);
+    }
 }

@@ -9,33 +9,25 @@
     <div id="popup-header">
         <img id='headerLogo' src='../assets/icons/logo-new.png' width='27px' height='27px' />
         <h3 id='selecton-settings-label'>Selecton settings</h3>
-        <img id='openSettingsInTabButton' class='circleButton float' src='../assets/icons/button-icons/open.svg' width="21px" height="21px" />
-
+        <img id='openSettingsInTabButton' class='circleButton' src='../assets/icons/button-icons/open.svg' width="21px" height="21px" />
     </div>
     
     <!-- Main Options Container -->
     <div class="options-container">
         <div style="margin-bottom: 15px; color: gray; font-size: 12px; text-align: center;">All changes saved automatically</div>
         
-        <!-- Group 1: General Settings -->
-        <h4>General</h4>
-        <div class="option">
+        <!-- Main Toggle -->
+        <div class="option" style="margin-bottom: 20px;">
             <span>Enable Selecton</span>
             <label class="switch">
                 <input type="checkbox" id="enabled">
                 <span class="slider"></span>
             </label>
         </div>
-        <div class="option">
-            <span>Excluded Domains</span>
-            <input type="text" id="excludedDomains" placeholder="example.com, site.org">
-        </div>
-        <div class="option">
-            <span>Show Update Notification</span>
-            <label class="switch">
-                <input type="checkbox" id="showUpdateNotification">
-                <span class="slider"></span>
-            </label>
+
+        <div id="mainContent">
+        <div class="option" style="margin-bottom: 15px;">
+            <button type="button" id="excludeCurrentDomain" style="width: 100%;"></button>
         </div>
 
         <hr>
@@ -194,8 +186,8 @@
                 </label>
             </div>
             <div class="option child-option">
-                <span>Blacklist</span>
-                <input type="text" id="wordSnappingBlacklist">
+                <span>Blacklist Domains</span>
+                <input type="text" id="wordSnappingBlacklist" placeholder="domain1.com, domain2.com">
             </div>
             <hr>
             <div class="option">
@@ -206,7 +198,7 @@
                 </label>
             </div>
             <div class="option child-option">
-                <span>Background</span>
+                <span>Background Color</span>
                 <input type="color" id="textSelectionBackground">
             </div>
             <div class="option child-option">
@@ -214,8 +206,8 @@
                 <input type="color" id="textSelectionColor">
             </div>
             <div class="option child-option">
-                <span>Opacity</span>
-                <input type="number" min="0.0" max="1.0" step="0.1" id="textSelectionBackgroundOpacity" style="width: 60px;">
+                <span>Background Opacity</span>
+                <input type="number" min="0.05" max="1.0" step="0.05" id="textSelectionBackgroundOpacity" style="width: 60px;">
             </div>
             <div class="option child-option">
                 <span>Override Website Color</span>
@@ -226,9 +218,38 @@
             </div>
         </div>
 
-        <!-- Group 4: Behavior -->
-        <button class="collapsible-header" id="behaviorHeader">Behavior</button>
+        <!-- Group 4: Buttons -->
+        <button class="collapsible-header" id="buttonsHeader">Buttons</button>
         <div class="collapsible-content">
+            <div class="option">
+                <span>Search Button</span>
+                <label class="switch">
+                    <input type="checkbox" id="showSearchButton">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="option child-option">
+                <span>Search Engine</span>
+                <select id="preferredSearchEngine">
+                    <option value="google">Google</option>
+                    <option value="bing">Bing</option>
+                    <option value="duckduckgo">DuckDuckGo</option>
+                    <option value="yandex">Yandex</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div class="option child-option">
+                <span>Custom Search URL</span>
+                <input type="text" id="customSearchUrl" placeholder="https://example.com/search?q=%s">
+            </div>
+            <hr>
+            <div class="option">
+                <span>Copy Button</span>
+                <label class="switch">
+                    <input type="checkbox" id="showCopyButton">
+                    <span class="slider"></span>
+                </label>
+            </div>
             <div class="option">
                 <span>Multi-Copy Stack</span>
                 <label class="switch">
@@ -238,104 +259,7 @@
             </div>
             <div class="option child-option">
                 <span>Separator</span>
-                <select id="multiCopySeparator">
-                    <option value="doubleNewline">Double new line</option>
-                    <option value="newline">New line</option>
-                    <option value="comma">Comma</option>
-                </select>
-            </div>
-            <hr>
-            <div class="option">
-                <span>Reveal Effect</span>
-                <select id="tooltipRevealEffect">
-                    <option value="noTooltipEffect">No effect</option>
-                    <option value="moveUpTooltipEffect">Move up</option>
-                    <option value="moveDownTooltipEffect">Move down</option>
-                    <option value="scaleUpTooltipEffect">Scale up</option>
-                    <option value="scaleUpFromBottomTooltipEffect">Scale up from bottom</option>
-                </select>
-            </div>
-            <div class="option">
-                <span>Animation Duration (ms)</span>
-                <input type="number" min="100" max="600" step="50" id="animationDuration" style="width: 60px;">
-            </div>
-            <div class="option">
-                <span>Position</span>
-                <select id="tooltipPosition">
-                    <option value="selectionCenter">Center of selection</option>
-                    <option value="overCursor">Over cursor</option>
-                </select>
-            </div>
-            <div class="option child-option">
-                <span>Hide when cursor moves away</span>
-                <label class="switch">
-                    <input type="checkbox" id="hideTooltipWhenCursorMovesAway">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <hr>
-            <div class="option">
-                <span>Hide on Action Click</span>
-                <label class="switch">
-                    <input type="checkbox" id="hideTooltipOnActionButtonClick">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option">
-                <span>Hide on Keypress</span>
-                <label class="switch">
-                    <input type="checkbox" id="hideOnKeypress">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option">
-                <span>Hide on Context Menu</span>
-                <label class="switch">
-                    <input type="checkbox" id="hideTooltipOnContextMenuOpen">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option">
-                <span>Draggable Tooltip</span>
-                <label class="switch">
-                    <input type="checkbox" id="draggableTooltip">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option">
-                <span>Recreate after Scroll</span>
-                <label class="switch">
-                    <input type="checkbox" id="recreateTooltipAfterScroll">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option child-option">
-                <span>Floating Offscreen</span>
-                <label class="switch">
-                    <input type="checkbox" id="floatingOffscreenTooltip">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Group 5: Action Buttons -->
-        <button class="collapsible-header" id="actionButtonsHeader">Action Buttons</button>
-        <div class="collapsible-content">
-            <div class="option">
-                <span>Search Engine</span>
-                <select id="preferredSearchEngine">
-                    <option value="google">Google</option>
-                    <option value="duckduckgo">DuckDuckGo</option>
-                    <option value="bing">Bing</option>
-                    <option value="yahoo">Yahoo</option>
-                    <option value="baidu">Baidu</option>
-                    <option value="yandex">Яндекс</option>
-                    <option value="custom">Custom</option>
-                </select>
-            </div>
-            <div class="option">
-                <span>Custom Search URL</span>
-                <input type="text" id="customSearchUrl">
+                <input type="text" id="multiCopySeparator" placeholder=", " style="width: 100px;">
             </div>
             <hr>
             <div class="option">
@@ -345,18 +269,10 @@
                     <span class="slider"></span>
                 </label>
             </div>
-            <div class="option child-option">
-                <span>Service</span>
-                <select id="preferredTranslateService">
-                    <option value="google">Google Translate</option>
-                    <option value="deepl">DeepL</option>
-                    <option value="bing">Bing Translate</option>
-                    <option value="yandex">Yandex Translate</option>
-                </select>
-            </div>
+
             <div class="option child-option">
                 <span>Target Language</span>
-                <input type="text" id="languageToTranslate" style="width: 80px;">
+                <input type="text" id="languageToTranslate" placeholder="en" style="width: 60px;">
             </div>
             <div class="option child-option">
                 <span>Live Translation</span>
@@ -367,9 +283,9 @@
             </div>
             <hr>
             <div class="option">
-                <span>Dictionary Button</span>
+                <span>Read Aloud Button</span>
                 <label class="switch">
-                    <input type="checkbox" id="showDictionaryButton">
+                    <input type="checkbox" id="showSpeakButton">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -381,30 +297,16 @@
                 </label>
             </div>
             <div class="option">
-                <span>Map Button</span>
+                <span>Share Button</span>
                 <label class="switch">
-                    <input type="checkbox" id="showOnMapButtonEnabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option">
-                <span>Open Links</span>
-                <label class="switch">
-                    <input type="checkbox" id="addOpenLinks">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="option">
-                <span>Copy Link to Text</span>
-                <label class="switch">
-                    <input type="checkbox" id="addButtonToCopyLinkToText">
+                    <input type="checkbox" id="showShareButton">
                     <span class="slider"></span>
                 </label>
             </div>
         </div>
 
-        <!-- Group 6: Conversion -->
-        <button class="collapsible-header" id="convertionHeader">Conversion</button>
+        <!-- Group 5: Smart Features -->
+        <button class="collapsible-header" id="smartHeader">Smart Features</button>
         <div class="collapsible-content">
             <div class="option">
                 <span>Convert Currencies</span>
@@ -555,6 +457,13 @@
         <button class="collapsible-header">Advanced</button>
         <div class="collapsible-content">
             <div class="option">
+                <span>Show Update Notification</span>
+                <label class="switch">
+                    <input type="checkbox" id="showUpdateNotification">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="option">
                 <span>Debug Mode</span>
                 <label class="switch">
                     <input type="checkbox" id="debugMode">
@@ -575,6 +484,8 @@
                 <span>Reset to Defaults</span>
                 <button type="button" id="resetDefaults" style="background-color: #d9534f;">Reset</button>
             </div>
+        </div>
+
         </div>
 
     </div>

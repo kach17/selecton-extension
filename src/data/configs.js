@@ -98,7 +98,8 @@ const DEFAULT_CONFIGS = {
     showPasteContentPreview: false,
     showSecondaryTooltipTitleOnHover: false,
     showStatsOnCopyButtonHover: true,
-    showTooltipArrow: true,
+    showSearchButton: true,
+    showShareButton: true,
     showTranslateButton: true,
     showTranslateIfLanguageUnknown: true,
     showUnconvertedValue: false,
@@ -119,8 +120,13 @@ const DEFAULT_CONFIGS = {
     wordSnappingBlacklist: ""
 };
 
-// Expose to global scope for popup
+// Expose to global scope for content scripts
 if (typeof window !== 'undefined') {
     window.configs = DEFAULT_CONFIGS;
     console.log("Selecton: Default configs loaded");
+}
+
+// Export for Webpack (popup.js)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DEFAULT_CONFIGS;
 }
