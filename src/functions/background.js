@@ -54,10 +54,10 @@ chrome.runtime.onInstalled.addListener(function (details) {
  **/
 function displayNotification(title, message, link, image) {
     chrome.notifications.create({
-        "type": "basic",
-        "iconUrl": image ?? "./assets/icons/logo-new.png",
-        "title": title,
-        "message": message,
+        type: "basic",
+        iconUrl: image ?? "./assets/icons/logo-new.png",
+        title: title,
+        message: message,
     }, function (notificationId) {
         // if an URL is specified register an onclick listener
         if (link)

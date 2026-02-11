@@ -1,60 +1,88 @@
-/* Tooltip */
+/* =============================================================================
+   SELECTON TOOLTIP SYSTEM - IMPROVED CSS
+   ============================================================================= */
+
+/* =============================================================================
+   CSS CUSTOM PROPERTIES (Variables)
+   ============================================================================= */
+:root {
+  /* Colors */
+  --selecton-background-color: #333;
+  --selecton-outline-color: #555;
+  --selecton-secondary-color: #4a9eff;
+  --selection-button-foreground: #fff;
+  --selection-button-background-hover: rgba(255, 255, 255, 0.1);
+  --selecton-info-panel-color: #aaa;
+  
+  /* Spacing */
+  --selecton-tooltip-inner-padding: 4px;
+  --selecton-button-padding: 6px 10px;
+  --selecton-border-radius: 6px;
+  
+  /* Sizing */
+  --selecton-font-size: 13px;
+  --selecton-button-icon-height: 14px;
+  --selecton-search-tooltip-icon-size: 16px;
+  --selecton-handle-circle-radius: 12px;
+  
+  /* Effects */
+  --selecton-button-icon-invert: invert(1);
+  --selecton-anim-duration: 150ms;
+  --selecton-button-border-left: 1px solid var(--selection-button-background-hover);
+}
+
+/* =============================================================================
+   TOOLTIP BASE STYLES
+   ============================================================================= */
 .selecton-tooltip {
   all: revert;
-  background: var(--selecton-background-color);
-  opacity: 0;
-  display: inline-block;
   position: absolute;
-  padding: var(--selecton-tooltip-inner-padding);
-  color: white;
-  border-radius: var(--selecton-border-radius);
-  font-stretch: condensed;
-  text-decoration: none;
   z-index: 100001 !important;
-  /* max-height: 24px !important; */
-  margin: 0px !important;
-  line-height: 1.2 !important;
-  box-sizing: border-box !important;
+  display: inline-block;
+  opacity: 0;
+  
+  /* Appearance */
+  background: var(--selecton-background-color);
+  color: white;
   border: 0.25px solid var(--selecton-outline-color);
-  min-width: fit-content !important;
+  border-radius: var(--selecton-border-radius);
+  
+  /* Spacing */
+  padding: var(--selecton-tooltip-inner-padding);
+  margin: 0 !important;
+  
+  /* Typography */
+  font-stretch: condensed;
+  font-size: var(--selecton-font-size);
+  line-height: 1.2 !important;
+  text-decoration: none;
   white-space: nowrap !important;
-  /* backdrop-filter: blur(5px) !important; */
+  
+  /* Sizing */
+  min-width: fit-content !important;
+  box-sizing: border-box !important;
 }
 
-/* Background blur experiments */
-/* .selecton-tooltip::before {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0; left: 0; right: 0;
-  backdrop-filter: blur(5px) !important;
+.selecton-tooltip.higher-z-index {
+  z-index: 100002 !important;
 }
 
-.hover-vertical-tooltip {
-  backdrop-filter: blur(5px) !important;
-}*/
-
-
-/* Tooltip arrow */
+/* =============================================================================
+   TOOLTIP ARROW
+   ============================================================================= */
 .selecton-tooltip-arrow {
-  z-index: 100000 !important;
-  height: 12px;
-  width: 24px;
-  overflow: hidden;
   position: absolute;
-  background: none !important;
-  box-shadow: none !important;
   left: 50%;
   top: 100%;
-  transform: translate(-13px, 0px);
+  z-index: 100000 !important;
+  width: 24px;
+  height: 12px;
+  overflow: hidden;
+  background: none !important;
+  box-shadow: none !important;
+  transform: translate(-13px, 0);
 }
 
-.arrow-on-bottom {
-  top: unset;
-  bottom: 100%;
-  transform: rotate(180deg) translate(11px, 0px);
-}
-
-/* .selecton-tooltip-arrow-child { */
 .selecton-tooltip-arrow::after {
   content: "";
   position: absolute;
@@ -62,122 +90,203 @@
   bottom: 50%;
   width: 15px;
   height: 15px;
-  transform: rotate(45deg);
+  background: var(--selecton-background-color);
   border-bottom: 0.25px solid var(--selecton-outline-color);
   border-right: 0.25px solid var(--selecton-outline-color);
-  background: var(--selecton-background-color);
-
-  /* apply clip-path for future blurred tooltip option */
-  /* clip-path: polygon(0% 100%, 100% 0%, 100% 100%) !important; */
+  transform: rotate(45deg);
 }
 
-/* Buttons */
+.selecton-tooltip-arrow.arrow-on-bottom {
+  top: unset;
+  bottom: 100%;
+  transform: rotate(180deg) translate(11px, 0);
+}
+
+/* =============================================================================
+   BUTTONS
+   ============================================================================= */
 .selection-popup-button {
   all: revert;
-  font: status-bar !important;
-  font-weight: 500 !important;
-  letter-spacing: 0 !important;
-  color: var(--selection-button-foreground) !important;
-  background-color: transparent !important;
-  cursor: pointer;
-  border: none !important;
-  box-shadow: none !important;
-  padding: var(--selecton-button-padding) !important;
-  /* vertical-align: top !important; */
-  font-family: Arial, Helvetica, sans-serif !important;
+  position: relative;
+  display: inline-block;
   height: 100% !important;
   min-height: 100% !important;
-  margin: 0px !important;
-  transition: background-color 25ms ease-out !important;
-  text-transform: none !important;
-  outline: none !important;
-  text-align: center !important;
+  margin: 0 !important;
+  padding: var(--selecton-button-padding) !important;
+  
+  /* Typography */
+  font: status-bar !important;
+  font-family: Arial, Helvetica, sans-serif !important;
   font-size: var(--selecton-font-size) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
   line-height: 1.2 !important;
-  position: relative;
+  text-align: center !important;
+  text-transform: none !important;
   vertical-align: top !important;
-}
-
-.tooltip-with-icons .selection-popup-button span {
-  /* vertical-align: middle !important; */
-}
-
-.color-highlight {
-  color: var(--selecton-secondary-color) !important;
+  
+  /* Appearance */
+  color: var(--selection-button-foreground) !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: background-color 25ms ease-out !important;
 }
 
 .selection-popup-button:hover,
-.highlighted-popup-button {
+.selection-popup-button.highlighted-popup-button {
   all: revert;
+  position: relative;
+  color: white !important;
   background-color: var(--selection-button-background-hover) !important;
   background-clip: padding-box !important;
   cursor: pointer;
-  color: white !important;
-  transition: background-color 25ms ease-out !important;
-  position: relative;
   filter: none !important;
+  transition: background-color 25ms ease-out !important;
 }
 
+.selection-popup-button.color-highlight {
+  color: var(--selecton-secondary-color) !important;
+}
+
+/* Button Links */
 .link-button {
-  text-decoration: none !important;
-  height: 100% !important;
   display: inline-block !important;
+  height: 100% !important;
+  text-decoration: none !important;
 }
 
 .link-button .selecton-button-img-icon {
   vertical-align: middle !important;
 }
 
-
-/* Clip content in buttons with hover panels */
-.button-with-top-hover-panel {
-  /* clip-path: polygon(-2000% -2000%, 2000% -2000%, 2000% 100%, -2000% 100%) !important; */
+/* Button Borders */
+.selecton-tooltip .button-with-border:not(:first-child),
+.hover-vertical-tooltip .button-with-border:not(:first-child) {
+  border-left: var(--selecton-button-border-left) !important;
 }
 
-.button-with-bottom-hover-panel {
-  /* clip-path: polygon(-2000% 0%, 2000% 0%, 2000% 2000%, -2000% 2000%) !important; */
+/* Hover Panel Clipping */
+.selection-popup-button.button-with-top-hover-panel {
+  clip-path: polygon(-2000% -2000%, 2000% -2000%, 2000% 100%, -2000% 100%) !important;
 }
 
+.selection-popup-button.button-with-bottom-hover-panel {
+  clip-path: polygon(-2000% 0%, 2000% 0%, 2000% 2000%, -2000% 2000%) !important;
+}
+
+/* =============================================================================
+   BUTTON ICONS
+   ============================================================================= */
+.selecton-button-img-icon {
+  all: revert;
+  display: unset !important;
+  width: var(--selecton-button-icon-height) !important;
+  height: var(--selecton-button-icon-height);
+  max-height: var(--selecton-button-icon-height) !important;
+  vertical-align: top !important;
+  fill: white;
+  filter: var(--selecton-button-icon-invert) !important;
+  background-color: transparent;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  transform: translate(0, -1px);
+}
+
+.selecton-button-img-icon.no-filter-icon {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.selecton-search-tooltip-icon {
+  width: var(--selecton-search-tooltip-icon-size);
+  min-width: var(--selecton-search-tooltip-icon-size) !important;
+  height: var(--selecton-search-tooltip-icon-size) !important;
+  max-height: var(--selecton-search-tooltip-icon-size);
+  vertical-align: top !important;
+  filter: none;
+}
+
+/* Button Indicators */
+.selecton-hover-button-indicator {
+  position: absolute;
+  right: 4px !important;
+  top: 2px !important;
+  width: 4px !important;
+  height: 4px !important;
+  margin: 0 auto !important;
+  opacity: 0.3;
+  background-color: var(--selection-button-foreground) !important;
+  border-radius: 50% !important;
+  transform: translate(0, 0.5px);
+  transition: opacity 100ms ease !important;
+  pointer-events: none;
+}
+
+.selecton-more-button-child-count {
+  top: -1px !important;
+  font-size: xx-small !important;
+  color: var(--selection-button-foreground) !important;
+  background: transparent !important;
+  opacity: 0.4;
+}
+
+/* =============================================================================
+   HOVER TOOLTIPS (VERTICAL)
+   ============================================================================= */
 .hover-vertical-tooltip {
   all: revert;
-  transition: transform var(--selecton-anim-duration) ease-out, opacity var(--selecton-anim-duration) ease-out !important;
-  opacity: 0.0;
-  /* z-index: 100001 !important; */
-  z-index: -1;
   position: absolute;
-  margin: 0px !important;
+  z-index: -1;
+  opacity: 0;
+  margin: 0 !important;
   padding: 6px;
-  line-height: 1.0 !important;
-  border: 0.25px solid var(--selecton-outline-color);
-  background: var(--selecton-background-color) !important;
-  font-size: var(--selecton-font-size) !important;
   max-width: 400%;
-  pointer-events: none;
+  
+  /* Appearance */
+  background: var(--selecton-background-color) !important;
+  border: 0.25px solid var(--selecton-outline-color);
   color: var(--selection-button-foreground);
+  
+  /* Typography */
+  font-size: var(--selecton-font-size) !important;
+  line-height: 1 !important;
   white-space: normal !important;
+  
+  /* Interaction */
+  pointer-events: none;
+  transition: transform var(--selecton-anim-duration) ease-out,
+              opacity var(--selecton-anim-duration) ease-out !important;
 }
 
-.no-padding-tooltip {
-  padding: 0px !important;
+.hover-vertical-tooltip.no-padding-tooltip {
+  padding: 0 !important;
 }
 
-.default-padding-tooltip {
+.hover-vertical-tooltip.default-padding-tooltip {
   padding: 2px !important;
 }
 
-/* Color accent for fetch results panel (translate, dictionary) */
 .selecton-live-translation {
   color: var(--selecton-secondary-color) !important;
 }
 
-/* Search tooltip with custom search options */
+/* =============================================================================
+   CUSTOM SEARCH BUTTONS
+   ============================================================================= */
 .custom-search-image-button {
   all: revert;
   padding: 6px 8px;
-  vertical-align: middle !important;
   height: max-content;
-  font-size: var(--selecton-font-size) !important;
+  vertical-align: middle !important;
+  
+  /* Typography */
   font-family: Arial, Helvetica, sans-serif !important;
+  font-size: var(--selecton-font-size) !important;
   color: var(--selection-button-foreground) !important;
   text-decoration: none !important;
 }
@@ -190,183 +299,120 @@
 
 .custom-search-image-button span {
   display: inline;
-  vertical-align: top !important;
-  opacity: 0.75;
   padding: 2px 5px !important;
+  opacity: 0.75;
+  vertical-align: top !important;
 }
 
-/* .custom-search-image-button img:not(.selecton-button-img-icon) { */
 .custom-search-image-button img {
   all: revert;
   filter: none !important;
 }
 
-/* Borders between search options */
-/* .selecton-tooltip:has(.button-with-border) .custom-search-image-button:not(:first-child){
-  border-top: 1px solid var(--selecton-outline-color) !important;
-  border-left: 1px solid var(--selecton-outline-color) !important;
-} */
-
+/* Color Preview */
 .selection-popup-color-preview-circle {
+  display: inline;
   max-width: 9px;
   max-height: 9px;
-  padding: 0px 7.5px !important;
-  border-radius: 50%;
+  padding: 0 7.5px !important;
   border: solid 1px var(--selection-button-background-hover);
-  display: inline;
+  border-radius: 50%;
 }
 
-.selecton-tooltip .button-with-border:not(:first-child), 
-.hover-vertical-tooltip .button-with-border:not(:first-child) {
-  border-left: var(--selecton-button-border-left) !important;
-}
-
-/* Highter z-index for search tooltip on bottom */
-.higher-z-index {
-  z-index: 100002 !important;
-}
-
+/* =============================================================================
+   DRAG HANDLE
+   ============================================================================= */
 .selecton-tooltip-draghandle {
   position: fixed;
+  left: 0;
+  top: 0;
   z-index: 99998;
-  left: 0px;
-  top: 0px;
   opacity: 0;
-  /* background: var(--selecton-background-color) !important; */
 }
 
 .selecton-tooltip-draghandle-line {
-  background: var(--selecton-background-color);
-  opacity: 0.7;
   position: absolute;
+  background: var(--selecton-background-color);
   border-radius: 4px;
+  opacity: 0.7;
   transition: height 200ms ease;
 }
 
 .selecton-tooltip-draghandle-circle {
-  border: 0.25px solid var(--selecton-outline-color);
-  z-index: 99998;
-  border-radius: 50% !important;
-  background: var(--selecton-background-color);
   position: relative;
-  height: var(--selecton-handle-circle-radius);
   width: var(--selecton-handle-circle-radius);
+  height: var(--selecton-handle-circle-radius);
+  background: var(--selecton-background-color);
+  border: 0.25px solid var(--selecton-outline-color);
+  border-radius: 50% !important;
+  z-index: 99998;
 }
 
-.draghandle-triangle {
+.selecton-tooltip-draghandle-circle.draghandle-triangle {
   border-radius: 4px !important;
   transform: translate(-50%) rotate(45deg);
 }
 
-.draghandle-square {
+.selecton-tooltip-draghandle-circle.draghandle-square {
   border-radius: 1.5px !important;
 }
 
-.draghandle-rhombus {
+.selecton-tooltip-draghandle-circle.draghandle-rhombus {
   border-radius: 1.5px !important;
   transform: rotate(45deg);
 }
 
-.selecton-button-img-icon {
-  all: revert;
-  fill: white;
-  vertical-align: top !important;
-  display: unset !important;
-  transform: translate(0, -1px);
-  height: var(--selecton-button-icon-height);
-  max-height: var(--selecton-button-icon-height) !important;
-  filter: var(--selecton-button-icon-invert) !important;
-  width: unset !important;
-  background-color: transparent;
-  width: var(--selecton-button-icon-height) !important;
-  background-repeat: no-repeat !important;
-  background-size: contain !important;
-}
-
-.no-filter-icon {
-  filter: none !important;
-  opacity: 1.0 !important;
-}
-
-.selecton-search-tooltip-icon {
-  filter: none;
-  width: var(--selecton-search-tooltip-icon-size);
-  height: var(--selecton-search-tooltip-icon-size) !important;
-  max-height: var(--selecton-search-tooltip-icon-size);
-  vertical-align: top !important;
-  min-width: var(--selecton-search-tooltip-icon-size) !important;
-}
-
-.selecton-hover-button-indicator {
-  opacity: 0.3;
-  position: absolute;
-  right: 4px !important;
-  top: 2px !important;
-  width: 4px !important;
-  height: 4px !important;
-  transform: translate(0px, 0.5px);
-  margin: 0 auto !important;
-  background-color: var(--selection-button-foreground) !important;
-  border-radius: 50% !important;
-  transition: opacity 100ms ease !important;
-  pointer-events: none;
-}
-.selecton-more-button-child-count{
-  background: transparent !important;
-  color: var(--selection-button-foreground) !important;
-  font-size: xx-small !important;
-  top: -1px !important;
-  opacity: 0.4;
-}
-
-/* ===== MARKER STYLES - MINIMAL (Let JavaScript handle everything) ===== */
-
-/* CRITICAL: Don't set background-color or color here - let inline styles work */
+/* =============================================================================
+   MARKERS & HIGHLIGHTS
+   ============================================================================= */
 .selecton-marker-highlight {
-  /* All styling is done via inline styles in JavaScript */
-  /* This prevents CSS from overriding with !important */
+  /* All styling handled via inline styles in JavaScript */
+  /* This class exists for selection but doesn't override inline styles */
 }
 
-/* Scrollbar hint indicator */
+/* Scrollbar Hint */
 .marker-scrollbar-hint {
   position: fixed;
   right: 1px;
-  outline: 1px solid lightgrey;
+  z-index: 2147483646 !important;
   width: 15px !important;
+  opacity: 0.55;
+  outline: 1px solid lightgrey;
   cursor: pointer;
   transition: width 200ms ease;
-  z-index: 2147483646 !important;
-  opacity: 0.55;
 }
 
 .marker-scrollbar-hint:hover {
-  opacity: 1.0;
+  opacity: 1;
 }
 
 .marker-scrollbar-hint .marker-scrollbar-tooltip {
-  visibility: hidden;
-  width: 200px;
-  background-color: #555 !important;
-  color: white !important;
-  text-align: center;
-  padding: 5px 3px;
-  border-radius: 6px;
-  padding: 12px !important;
-  pointer-events: none !important;
   position: absolute;
-  z-index: 2147483647 !important;
   bottom: 0;
   right: 120%;
+  z-index: 2147483647 !important;
   width: max-content !important;
-  text-align: start !important;
-  font-size: 12px !important;
+  padding: 12px !important;
+  visibility: hidden;
   opacity: 0;
+  
+  /* Appearance */
+  background-color: #555 !important;
+  color: white !important;
+  border-radius: 6px;
+  
+  /* Typography */
+  font-size: 12px !important;
+  text-align: start !important;
+  
+  /* Interaction */
+  pointer-events: none !important;
   transition: opacity 250ms, visibility 250ms !important;
 }
 
-.marker-scrollbar-tooltip-bottom {
+.marker-scrollbar-hint .marker-scrollbar-tooltip.marker-scrollbar-tooltip-bottom {
   bottom: unset !important;
-  top: 0px !important;
+  top: 0 !important;
 }
 
 .marker-scrollbar-hint:hover .marker-scrollbar-tooltip {
@@ -375,19 +421,19 @@
   transition-delay: 100ms;
 }
 
-/* Marker delete button - FLOATING VERSION */
+/* Marker Delete Button */
 .marker-highlight-delete-floating {
   position: absolute;
+  z-index: 999999999 !important;
+  padding: 2px 6px;
+  font-size: 14px;
+  font-style: normal !important;
   background: #555;
   color: white;
-  border-radius: 3px;
   border: 1px solid lightgray;
-  z-index: 999999999 !important;
-  font-size: 14px;
-  padding: 2px 6px;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  font-style: normal !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   transition: background 150ms;
 }
 
@@ -395,14 +441,14 @@
   background: red;
 }
 
-
-/* Vertical layout for tooltip */
+/* =============================================================================
+   VERTICAL LAYOUT
+   ============================================================================= */
 .selecton-tooltip.vertical-layout-tooltip {
   max-height: unset !important;
-  /* min-width: 140px !important; */
 }
 
-.selecton-tooltip.reversed-order {
+.selecton-tooltip.vertical-layout-tooltip.reversed-order {
   display: flex !important;
   flex-direction: column-reverse !important;
 }
@@ -413,15 +459,11 @@
 
 .selecton-tooltip.vertical-layout-tooltip .selection-popup-button {
   display: block !important;
-  clip-path: none !important;
   width: 100% !important;
   width: -moz-available !important;
   width: -webkit-fill-available !important;
   width: fill-available !important;
-}
-
-.vertical-layout-tooltip .hover-vertical-tooltip .selection-popup-button {
-  border-radius: unset !important;
+  clip-path: none !important;
 }
 
 .selecton-tooltip.vertical-layout-tooltip .selection-popup-button img {
@@ -431,6 +473,10 @@
 .vertical-layout-tooltip .selecton-hover-button-indicator {
   top: 50% !important;
   right: 2px !important;
+}
+
+.vertical-layout-tooltip .hover-vertical-tooltip .selection-popup-button {
+  border-radius: unset !important;
 }
 
 .selecton-tooltip.vertical-layout-tooltip .hover-vertical-tooltip {
@@ -451,44 +497,47 @@
   border-bottom: 1px solid var(--selection-button-background-hover) !important;
 }
 
-
-/* Info panel */
+/* =============================================================================
+   INFO PANELS
+   ============================================================================= */
 .selecton-info-panel {
-  text-align: center !important;
+  margin: 0 !important;
+  padding: 2px 0 !important;
+  
+  /* Appearance */
+  border-bottom: 1px solid var(--selection-button-background-hover) !important;
+  
+  /* Typography */
   font: status-bar !important;
   font-size: 9px !important;
   font-weight: 500 !important;
   letter-spacing: 0 !important;
+  text-align: center !important;
   color: var(--selecton-info-panel-color) !important;
-  border-bottom: 1px solid var(--selection-button-background-hover) !important;
-  margin-top: -1px !important;
-  padding: 0 0 1px 0 !important;
-  margin-top: -2px !important;
 }
 
-.info-panel-on-bottom {
+.selecton-info-panel.info-panel-on-bottom {
   border-bottom: unset !important;
   border-top: 1px solid var(--selection-button-background-hover) !important;
-  padding: 0px !important;
-  margin-top: 0px !important;
 }
 
 .selecton-hover-panel-container {
-  margin: 3px;
-  margin-top:1px;
-  border: 1px solid var(--selection-button-background-hover);
-  border-radius: 3px;
-  border-radius: calc(var(--selecton-border-radius) / 1.5);
-  padding: 2px !important;
   position: relative !important;
+  margin: 3px;
+  margin-top: 1px;
+  padding: 2px !important;
+  border: 1px solid var(--selection-button-background-hover);
+  border-radius: calc(var(--selecton-border-radius) / 1.5);
 }
 
 .selecton-hover-panel-header {
-  font: status-bar !important;
-  text-align: center !important;
-  font-size: 9px !important;
-  font-weight:normal !important;
-  padding: 0 12px;
   display: block;
+  padding: 0 12px;
+  
+  /* Typography */
+  font: status-bar !important;
+  font-size: 9px !important;
+  font-weight: normal !important;
+  text-align: center !important;
   color: var(--selecton-info-panel-color) !important;
 }

@@ -8,6 +8,109 @@ function addContextualButtons(callbackOnFinish) {
 
     if (selection == null) return;
 
+    // Cache for voice availability to avoid repeated checks
+    let availableVoiceLanguages = null;
+    let voicesChecked = false;
+
+    /**
+     * Detect the language of selected text using Chrome's i18n API
+     */
+    function detectTextLanguage(text, callback) {
+        if (!chrome.i18n.detectLanguage) {
+            callback(null);
+            return;
+        }
+
+        try {
+            chrome.i18n.detectLanguage(text, (result) => {
+                const language = result?.languages?.[0]?.language;
+                callback(language || null);
+            });
+        } catch (e) {
+            if (configs.debugMode) console.error('Language detection failed:', e);
+            callback(null);
+        }
+    }
+
+    /**
+     * Check if any voice is available for the given language
+     */
+    function isVoiceAvailableForLanguage(languageCode) {
+        if (!languageCode) return false;
+        
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) return false;
+
+        // Check for exact language match or language family match
+        return voices.some(voice => {
+            const voiceLang = voice.lang.toLowerCase();
+            const targetLang = languageCode.toLowerCase();
+            
+            // Exact match (e.g., 'en-US' matches 'en-US')
+            if (voiceLang === targetLang) return true;
+            
+            // Language family match (e.g., 'en' matches 'en-US', 'en-GB', etc.)
+            if (voiceLang.startsWith(targetLang + '-') || targetLang.startsWith(voiceLang.split('-')[0])) return true;
+            
+            return false;
+        });
+    }
+
+    /**
+     * Get available voice languages (cached for performance)
+     */
+    function getAvailableVoiceLanguages() {
+        if (!voicesChecked) {
+            availableVoiceLanguages = new Set();
+            const voices = window.speechSynthesis.getVoices();
+            
+            voices.forEach(voice => {
+                // Extract language family (e.g., 'en' from 'en-US')
+                const langFamily = voice.lang.split('-')[0].toLowerCase();
+                availableVoiceLanguages.add(langFamily);
+                // Also add full language code
+                availableVoiceLanguages.add(voice.lang.toLowerCase());
+            });
+            
+            voicesChecked = true;
+            if (configs.debugMode) {
+                console.log('Available voice languages:', Array.from(availableVoiceLanguages));
+            }
+        }
+        
+        return availableVoiceLanguages;
+    }
+
+    /**
+     * Check if voice is available for detected language (async)
+     */
+    function isVoiceAvailableForDetectedLanguage(callback) {
+        // First check if we have any voices at all
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length === 0) {
+            callback(false);
+            return;
+        }
+
+        // Detect language of selected text
+        detectTextLanguage(selectedText, (detectedLanguage) => {
+            if (!detectedLanguage) {
+                // Language detection failed, fallback to checking for English voice
+                if (configs.debugMode) console.log('Language detection failed, checking for English voice');
+                callback(isVoiceAvailableForLanguage('en'));
+                return;
+            }
+
+            if (configs.debugMode) console.log(`Detected language: ${detectedLanguage}`);
+            
+            // Check if we have voice for detected language
+            const hasVoice = isVoiceAvailableForLanguage(detectedLanguage);
+            if (configs.debugMode) console.log(`Voice available for ${detectedLanguage}: ${hasVoice}`);
+            
+            callback(hasVoice);
+        });
+    }
+
     const initialChildrenCount = tooltip.children.length;
 
     const loweredSelectedText = selectedText.toLowerCase();
@@ -391,100 +494,6 @@ function addContextualButtons(callbackOnFinish) {
                 }
         }
 
-        /// Add read aloud button
-        if (configs.debugMode) console.log('Read aloud check - showSpeakButton:', configs.showSpeakButton);
-        if (configs.debugMode) console.log('Read aloud check - selectedText:', JSON.stringify(selectedText));
-        if (configs.debugMode) console.log('Read aloud check - trimmed length:', selectedText.trim().length);
-        
-        if (configs.showSpeakButton && selectedText.trim().length > 0) {
-            if (configs.debugMode) console.log('Read aloud config:', configs.showSpeakButton);
-            if (configs.debugMode) console.log('Adding read aloud button for:', selectedText);
-            const speakButton = addContextualTooltipButton(function (e) {
-                const textToSpeak = selectedText.trim();
-                
-                // Stop any current speech
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.cancel();
-                }
-                
-                // Create new speech utterance
-                const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                
-                // Configure speech settings
-                utterance.rate = 1.0;
-                utterance.pitch = 1.0;
-                utterance.volume = 1.0;
-                
-                // Find preferred voice (try to use English or browser default)
-                const voices = window.speechSynthesis.getVoices();
-                if (voices.length > 0) {
-                    // Try to find English voice first
-                    const englishVoice = voices.find(voice => 
-                        voice.lang.startsWith('en-') || voice.lang === 'en'
-                    );
-                    utterance.voice = englishVoice || voices[0];
-                }
-                
-                // Handle speech events
-                utterance.onstart = function() {
-                    if (configs.debugMode) console.log('Speech started');
-                };
-                
-                utterance.onend = function() {
-                    if (configs.debugMode) console.log('Speech ended');
-                };
-                
-                utterance.onerror = function(event) {
-                    if (configs.debugMode) console.log('Speech error:', event.error);
-                    // Show error notification
-                    const notification = document.createElement('div');
-                    notification.textContent = 'Speech synthesis not available';
-                    notification.style.cssText = `
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: #d9534f;
-                        color: white;
-                        padding: 10px 15px;
-                        border-radius: 4px;
-                        z-index: 10000;
-                        font-size: 14px;
-                    `;
-                    document.body.appendChild(notification);
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 3000);
-                };
-                
-                // Start speaking
-                window.speechSynthesis.speak(utterance);
-            });
-
-            // Set button appearance based on style
-            if (configs.buttonsStyle == 'onlylabel') {
-                speakButton.textContent = 'Read Aloud';
-            } else {
-                speakButton.appendChild(createImageIconForButton(speakButtonIcon, configs.buttonsStyle == 'onlyicon' ? '' : 'Read Aloud', true));
-            }
-            
-            // Add visual indicator when speaking
-            const originalOnStart = utterance.onstart;
-            utterance.onstart = function() {
-                originalOnStart();
-                speakButton.style.background = 'var(--selection-button-background-active)';
-                speakButton.style.color = 'var(--selection-button-foreground-active)';
-            };
-            
-            const originalOnEnd = utterance.onend;
-            utterance.onend = function() {
-                originalOnEnd();
-                speakButton.style.background = '';
-                speakButton.style.color = '';
-            };
-        }
-
         /// Add HEX color preview button
         if (configs.addColorPreviewButton) {
             if ((!selectionContainsSpaces && selectionLength == 7 && selectedText.includes('#')) ||
@@ -837,9 +846,81 @@ function addContextualButtons(callbackOnFinish) {
             addDictionaryButton(selectionLength);
         }
 
-        /// Add marker button
-        if (configs.addMarkerButton)
-            addMarkerButton();
+        /// Add read aloud button
+        if (configs.showSpeakButton && selectedText.trim().length > 0) {
+            // Check if voice is available for detected language before adding button
+            isVoiceAvailableForDetectedLanguage(function(hasVoice) {
+                if (hasVoice) {
+                    if (configs.debugMode) console.log('Adding read aloud button for:', selectedText);
+                    const speakButton = addBasicTooltipButton('Read Aloud', speakButtonIcon, function (e) {
+                        const textToSpeak = selectedText.trim();
+
+                        // Stop any current speech
+                        if (window.speechSynthesis.speaking) {
+                            window.speechSynthesis.cancel();
+                        }
+
+                        // Create new speech utterance
+                        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+                        // Configure speech settings
+                        utterance.rate = 1.0;
+                        utterance.pitch = 1.0;
+                        utterance.volume = 1.0;
+
+                        // Find preferred voice (try to use English or browser default)
+                        const voices = window.speechSynthesis.getVoices();
+                        if (voices.length > 0) {
+                            // Try to find English voice first
+                            const englishVoice = voices.find(voice => 
+                                voice.lang.startsWith('en-') || voice.lang === 'en'
+                            );
+                            utterance.voice = englishVoice || voices[0];
+                        }
+
+                        // Handle speech events
+                        utterance.onstart = function() {
+                            if (configs.debugMode) console.log('Speech started');
+                            speakButton.style.background = 'var(--selection-button-background-active)';
+                            speakButton.style.color = 'var(--selection-button-foreground-active)';
+                        };
+
+                        utterance.onend = function() {
+                            if (configs.debugMode) console.log('Speech ended');
+                            speakButton.style.background = '';
+                            speakButton.style.color = '';
+                        };
+
+                        utterance.onerror = function(event) {
+                            if (configs.debugMode) console.log('Speech error:', event.error);
+                            // Show error notification
+                            const notification = document.createElement('div');
+                            notification.textContent = 'Speech synthesis not available';
+                            notification.style.cssText = `
+                                position: fixed;
+                                top: 20px;
+                                right: 20px;
+                                background: #d9534f;
+                                color: white;
+                                padding: 10px 15px;
+                                border-radius: 4px;
+                                z-index: 10000;
+                                font-size: 14px;
+                            `;
+                            document.body.appendChild(notification);
+                            setTimeout(() => {
+                                if (notification.parentNode) {
+                                    notification.parentNode.removeChild(notification);
+                                }
+                            }, 3000);
+                        };
+
+                        // Start speaking
+                        window.speechSynthesis.speak(utterance);
+                    }, false, undefined, false);
+                }
+            });
+        }
 
         /// Add button to copy link to selected text
         if (configs.addButtonToCopyLinkToText) {

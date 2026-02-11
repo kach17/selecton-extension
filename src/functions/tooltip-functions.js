@@ -1,3 +1,19 @@
+function getTextFieldCoords(e) {
+    // For text fields, position the tooltip near the cursor
+    const tooltipHeight = 50; // Estimated height
+    const arrowHeight = 12; // Arrow height
+    
+    let x = e.clientX;
+    let y = e.clientY - tooltipHeight - arrowHeight - 5;
+    
+    // Ensure tooltip doesn't go above viewport
+    if (y < 0) {
+        y = e.clientY + arrowHeight + 5;
+    }
+    
+    return { x, y };
+}
+
 function returnTooltipRevealTransform(endPosition = true) {
     const dx = '-50%';
     const dyPercentOffset = configs.verticalLayoutTooltip ? 30 : 100;
@@ -190,7 +206,8 @@ function setCopyButtonTitle(copyButton, symbols, words) {
         infoPanel = document.createElement('div');
         infoPanel.className = 'selecton-info-panel';
 
-        configs.verticalLayoutTooltip ? tooltip.appendChild(infoPanel) : tooltip.insertBefore(infoPanel, tooltip.children[1]);
+        // Insert info panel at the very top (index 0), before arrow and buttons
+        tooltip.insertBefore(infoPanel, tooltip.children[0]);
         makeTooltipElementDraggable(infoPanel, false);
 
         if (selectedTextIsCode == true) {

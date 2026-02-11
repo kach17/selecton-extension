@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Field Buttons Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .test-field { margin: 10px 0; padding: 5px; border: 1px solid #999; }
+        .debug { background: #fff3cd; padding: 10px; margin: 10px 0; }
+        .contenteditable { border: 1px solid #999; padding: 5px; min-height: 50px; }
+    </style>
+</head>
+<body>
+    <h1>Text Field Buttons Test</h1>
+    
+    <div class="debug">
+        <h3>Debug Information</h3>
+        <div id="debug-info">Click on text fields to test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Input Field (type="text")</h3>
+        <input type="text" class="test-field" placeholder="Click here and try to paste" value="Some text">
+    </div>
+
+    <div class="test-section">
+        <h3>Textarea</h3>
+        <textarea class="test-field" rows="3" placeholder="Click here and try to paste">Some textarea content</textarea>
+    </div>
+
+    <div class="test-section">
+        <h3>Content Editable Div</h3>
+        <div class="contenteditable" contenteditable="true">Some editable content</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Email Field</h3>
+        <input type="email" class="test-field" placeholder="email@example.com" value="test@example.com">
+    </div>
+
+    <div class="test-section">
+        <h3>Search Field</h3>
+        <input type="search" class="test-field" placeholder="Search here">
+    </div>
+
+    <script>
+        // Debug logging
+        document.addEventListener('click', function(e) {
+            const debug = document.getElementById('debug-info');
+            const target = e.target;
+            
+            let fieldType = 'unknown';
+            if (target.tagName === 'INPUT') {
+                fieldType = `input[type="${target.type}"]`;
+            } else if (target.tagName === 'TEXTAREA') {
+                fieldType = 'textarea';
+            } else if (target.hasAttribute('contenteditable')) {
+                fieldType = 'contenteditable';
+            }
+            
+            debug.innerHTML = `
+                <strong>Clicked element:</strong> ${fieldType}<br>
+                <strong>Tag:</strong> ${target.tagName}<br>
+                <strong>Type:</strong> ${target.type || 'N/A'}<br>
+                <strong>ContentEditable:</strong> ${target.hasAttribute('contenteditable')}<br>
+                <strong>Value:</strong> "${target.value || target.innerHTML || 'empty'}"
+            `;
+        });
+
+        // Check if Selecton is loaded
+        setTimeout(() => {
+            if (typeof window.selectonEventManager !== 'undefined') {
+                console.log('Selecton is loaded');
+                document.getElementById('debug-info').innerHTML += '<br><strong style="color: green">Selecton extension is loaded!</strong>';
+            } else {
+                console.log('Selecton is NOT loaded');
+                document.getElementById('debug-info').innerHTML += '<br><strong style="color: red">Selecton extension is NOT loaded!</strong>';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

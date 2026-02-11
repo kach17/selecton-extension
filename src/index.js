@@ -1,6 +1,16 @@
 function initConfigs(callback) {
   const userSettingsKeys = Object.keys(configs);
 
+  // Initialize event manager
+  if (!window.selectonEventManager) {
+    window.selectonEventManager = getEventManager();
+  }
+
+  // Initialize lazy feature loader
+  if (!window.selectonFeatureLoader) {
+    window.selectonFeatureLoader = getFeatureLoader();
+  }
+
   /// Load user settings
   chrome.storage.local.get(
     userSettingsKeys, function (loadedConfigs) {
@@ -55,15 +65,17 @@ function initConfigs(callback) {
 
         /// Run only on first load
         if (configsWereLoaded == false) {
-          setTimeout(function () {
+          setTimeout(async function () {
+            // Initialize lazy feature loading
+            await initializeLazyFeatures(configs);
+            
             if (configs.addActionButtonsForTextFields)
               initMouseListeners();
             else {
-              document.addEventListener('selectionchange', selectionChangeInitListener);
+              window.selectonEventManager.add(document, 'selectionchange', selectionChangeInitListener);
             }
 
-            if (configs.addMarkerButton)
-              initMarkersRestore();
+            // Note: Markers and other features will be loaded lazily when needed
           }, 1);
 
           configsWereLoaded = true;
@@ -153,40 +165,16 @@ function setDocumentStyles(){
 }
 
 function loadCurrencyRates(){
+  // Only load currency feature if actually needed
   if (configs.convertCurrencies) {
-    let updateRatesEveryDays = configs.updateRatesEveryDays;
-    if (updateRatesEveryDays < 7) updateRatesEveryDays = 7;
-
-    ratesLastFetchedDate = configs.ratesLastFetchedDate;
-
-    if (ratesLastFetchedDate == null || ratesLastFetchedDate == undefined || ratesLastFetchedDate == '')
-      fetchCurrencyRates();
-    else {
-      let today = new Date();
-      let dayOfNextFetch = new Date(ratesLastFetchedDate);
-      const oneDayInMilliseconds = 1000 * 60 * 60 * 24;
-
+    // Load currency feature lazily
+    window.selectonFeatureLoader.loadFeature('currency').then(() => {
       if (configs.debugMode) {
-        console.log('--- Check dates to update currency rates ---');
-        console.log('Today: ' + today);
-        console.log('Date of last fetch: ' + dayOfNextFetch);
+        console.log('Selecton: Currency feature loaded on demand');
       }
-
-      today = today.getTime();
-      dayOfNextFetch = new Date(dayOfNextFetch.getTime() + (updateRatesEveryDays * oneDayInMilliseconds));
-
-      if (configs.debugMode) {
-        console.log('Rates update interval: ' + updateRatesEveryDays);
-        console.log('Date of next fetch: ' + dayOfNextFetch);
-        console.log('--- Finished checking dates ---');
-      }
-
-      loadCurrencyRatesFromMemory();
-      if (today >= dayOfNextFetch) {
-        if (configs.debugMode) console.log('Trying to fetch updated currency rates...');
-        fetchCurrencyRates(); /// update rates from server
-      } 
-    }
+    }).catch(error => {
+      console.error('Selecton: Failed to load currency feature:', error);
+    });
   }
 }
 
@@ -207,7 +195,7 @@ function loadTranslatedLabels(){
 }
 
 function initMouseListeners() {
-  document.addEventListener("mousedown", function (e) {
+  window.selectonEventManager.add(document, "mousedown", function (e) {
     if (tooltipIsShown == false || isTextFieldFocused == false) return;
     if (isDraggingTooltip || isDraggingDragHandle) return;
 
@@ -223,7 +211,7 @@ function initMouseListeners() {
     }
   });
 
-  document.addEventListener("mouseup", function (e) {
+  window.selectonEventManager.add(document, "mouseup", function (e) {
     if (!configs.enabled) return;
     if (isDraggingTooltip) return;
 
@@ -317,8 +305,7 @@ function initMouseListeners() {
       target.tagName === "INPUT" && (
           target.type == 'text' || 
           target.type == 'email' || 
-          target.type == 'search' || 
-          target.type == 'text'
+          target.type == 'search'
       )) ||  target.tagName === "TEXTAREA" || target.hasAttribute('contenteditable');
 
     if (isTextFieldFocused && configs.addActionButtonsForTextFields) {
@@ -361,13 +348,13 @@ function initMouseListeners() {
 
     /// Listener to hide tooltip when cursor moves away
     if (configs.hideTooltipWhenCursorMovesAway && configs.tooltipPosition == 'overCursor') {
-      window.addEventListener('mousemove', mouseMoveToHideListener);
+      window.selectonEventManager.add(window, 'mousemove', mouseMoveToHideListener);
     }
 
   }
 
   try {
-    window.addEventListener('popstate', function () {
+    window.selectonEventManager.add(window, 'popstate', function () {
       hideTooltip();
       hideDragHandles();
       if (configs.debugMode) console.log('Selecton tooltip was hidden on url change');
@@ -378,8 +365,7 @@ function initMouseListeners() {
   }
 
   /// Hide tooltip on scroll
-  // document.addEventListener('wheel', hideOnScrollListener);
-  document.addEventListener('scroll', hideOnScrollListener);
+  window.selectonEventManager.add(document, 'scroll', hideOnScrollListener);
 
   function hideOnScrollListener(e) {
     if (tooltipIsShown == false) return;
@@ -399,7 +385,7 @@ function initMouseListeners() {
   }
 
   /// Hide tooltip on window resize
-  window.addEventListener('resize', function (e) {
+  window.selectonEventManager.add(window, 'resize', function (e) {
     if (tooltipIsShown == false) return;
 
     if (configs.debugMode)
@@ -411,7 +397,7 @@ function initMouseListeners() {
   });
 
   /// Hide tooltip on drag start
-  document.addEventListener('dragstart', function (e) {
+  window.selectonEventManager.add(document, 'dragstart', function (e) {
     if (tooltipIsShown == false) return;
     if (e.target.classList && e.target.classList.contains('selection-popup-button')) return;
 
@@ -424,7 +410,7 @@ function initMouseListeners() {
 
   /// Hide tooltip when any key is pressed
   if (configs.hideOnKeypress)
-    document.addEventListener("keydown", function (e) {
+    window.selectonEventManager.add(document, "keydown", function (e) {
       if (tooltipIsShown == false) return;
       if (e.key == 'Control') return;
       if (e.shiftKey) return;
@@ -435,7 +421,7 @@ function initMouseListeners() {
 
   /// Hide tooltip on context menu open (right click)
   if (configs.hideTooltipOnContextMenuOpen)
-    document.addEventListener("contextmenu",(function(e) {
+    window.selectonEventManager.add(document, "contextmenu",(function(e) {
       if (!tooltipIsShown || tooltip.contains(e.target)) return;
       hideTooltip(); 
       hideDragHandles();
@@ -491,7 +477,7 @@ function recreateTooltip() {
 function selectionChangeInitListener() {
   if (!configs.enabled) return;
   if (document.getSelection().toString().length < 1) return;
-  document.removeEventListener('selectionchange', selectionChangeInitListener);
+  window.selectonEventManager.remove(document, 'selectionchange', selectionChangeInitListener);
 
   try {
     initMouseListeners();

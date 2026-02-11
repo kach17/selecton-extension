@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecton Tooltip Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>Selecton Extension Test Page</h2>
+        <p><strong>Instructions:</strong></p>
+        <ul>
+            <li>Select text on this page to test tooltip functionality</li>
+            <li>Click in input fields to test text field tooltips</li>
+            <li>Check if borders appear/disappear based on settings</li>
+            <li>Verify arrow tip appears below tooltips</li>
+        </ul>
+        <p><strong>What to test:</strong></p>
+        <ul>
+            <li>✅ Arrow tip should show by default (showTooltipArrow: true)</li>
+            <li>✅ Button borders should show by default (showButtonBorders: true)</li>
+            <li>✅ Copy button should show by default (showCopyButton: true)</li>
+            <li>✅ Search button should show by default (showSearchButton: true)</li>
+            <li>✅ Toggle settings in extension popup to see changes</li>
+            <li>✅ Test individual button toggles work independently</li>
+        </ul>
+        <p><strong>How to test toggles:</strong></p>
+        <ol>
+            <li>Right-click the Selecton extension icon → Options</li>
+            <li>Toggle "Copy Button" off → select text → copy button should disappear</li>
+            <li>Toggle "Search Button" off → select text → search button should disappear</li>
+            <li>Toggle "Show Button Borders" off → borders should disappear</li>
+            <li>Toggle "Show Tooltip Arrow" off → arrow should disappear</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h3>Text Selection Test</h3>
+        <p>Select this text to test the tooltip functionality. The tooltip should appear with buttons for copying, searching, and other actions. You should see an arrow tip pointing to the selected text.</p>
+        
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+        
+        <p>Here's some more text with <strong>bold formatting</strong> and <em>italic formatting</em> to test how the tooltip handles different text styles.</p>
+    </div>
+
+    <div class="test-section">
+        <h3>Input Field Tests</h3>
+        <label for="text-input">Text Input:</label>
+        <input type="text" id="text-input" placeholder="Click here and select text or use empty field to test paste button">
+        
+        <label for="textarea">Textarea:</label>
+        <textarea id="textarea" rows="4" placeholder="Select text here or leave empty to test paste functionality"></textarea>
+        
+        <label for="search-input">Search Input:</label>
+        <input type="search" id="search-input" placeholder="Test search field behavior">
+    </div>
+
+    <div class="test-section">
+        <h3>Content Editable Test</h3>
+        <div contenteditable="true" style="border: 1px solid #ddd; padding: 10px; min-height: 60px; border-radius: 4px;">
+            This is a content-editable area. Select this text to test how the tooltip handles rich text editing areas.
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>Code Test</h3>
+        <pre style="background: #f8f8f8; padding: 15px; border-radius: 4px; overflow-x: auto;">
+<code>function testFunction() {
+    const message = "Select this code to test code detection";
+    console.log(message);
+    return true;
+}</code>
+        </pre>
+    </div>
+
+    <script>
+        // Log for debugging
+        console.log('Selecton test page loaded');
+        
+        // Add some interactivity to make testing easier
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - ready for Selecton testing');
+            
+            // Add click handlers to clear fields for paste testing
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('click', function() {
+                    console.log('Input clicked:', input.id || input.type);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

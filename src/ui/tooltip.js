@@ -64,7 +64,7 @@ function handleTextFieldTooltip(e) {
     setUpTooltip();
     addBasicTooltipButtons('textfield');
 
-    if (tooltip.children.length < 2) {
+    if (tooltip.children.length < 1) {
         tooltip.remove();
         return;
     }
@@ -125,6 +125,8 @@ function finalizeTooltipUI(e, recreated = false, isStandard = false) {
  * Utility: Standardizes borders across all buttons (DRY).
  */
 function standardizeButtonBorders(container) {
+    if (!configs.showButtonBorders) return;
+    
     const buttons = container.querySelectorAll('.selection-popup-button');
     buttons.forEach((btn, i) => {
         btn.classList.add('button-with-border');
@@ -429,7 +431,8 @@ function handleTextFieldTooltip(e) {
     setUpTooltip();
     addBasicTooltipButtons('textfield');
 
-    if (tooltip.children.length < 2) {
+    // FIX: Changed from < 2 to < 1 to allow tooltips with single button (e.g., just paste button)
+    if (tooltip.children.length < 1) {
         tooltip.remove();
         return;
     }
@@ -479,6 +482,8 @@ function handleSelectionTooltip(e, recreated) {
 }
 
 function standardizeButtonBorders(container) {
+    if (!configs.showButtonBorders) return;
+    
     const buttons = container.querySelectorAll('.selection-popup-button');
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].classList.add('button-with-border');

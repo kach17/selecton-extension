@@ -9,18 +9,21 @@ module.exports = {
   /// background script
   entry: {
     background: "./src/functions/background.js",
-    "popup/popup": "./src/popup/popup.js",
+    "popup/popup": "./src/popup/popup.js"
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: "[name].js"
   },
+  experiments: {
+    outputModule: false // Keep as IIFE for browser extension compatibility
+  },
   plugins: [
-    /// content scripts
+    /// content scripts - using ConcatPlugin to bundle all files
     new ConcatPlugin({
       name: 'content',
       outputPath: './',
-      fileName: '[name].js',
+      fileName: 'content.js',
       filesToConcat: [
         "./src/data/**",
         [
@@ -49,7 +52,13 @@ module.exports = {
   optimization: {
     minimize: true,
     minimizer: [
-      new TerserPlugin(), 
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // Remove console.log in production
+          }
+        }
+      }), 
       new CssMinimizerPlugin(),
       new JsonMinimizerPlugin(),
     ],

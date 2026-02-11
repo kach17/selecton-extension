@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tooltip Structure Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .test-text { background: #f5f5f5; padding: 10px; margin: 10px 0; cursor: pointer; border-radius: 4px; }
+        .debug { background: #e8f5e8; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .expected { background: #d4edda; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .instructions { background: #fff3cd; padding: 15px; margin: 10px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Tooltip Structure Test</h1>
+    
+    <div class="instructions">
+        <h3>📋 Instructions</h3>
+        <ol>
+            <li>Select any text on this page</li>
+            <li>Observe the tooltip structure</li>
+            <li>The order should be: Arrow → Info Panel → Search → Copy → Other buttons</li>
+            <li>Info panel should appear BEFORE search button, not after it</li>
+        </ol>
+    </div>
+
+    <div class="expected">
+        <h3>✅ Expected Tooltip Structure</h3>
+        <div style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 4px;">
+            [Info Panel] [Arrow] [Search] [Copy] [Share] [Other...]
+        </div>
+        <p><strong>Structure:</strong> Info panel at top, connected to tooltip, arrow below info panel, then buttons</p>
+    </div>
+
+    <div class="debug">
+        <h3>🔍 Debug Information</h3>
+        <div id="debug-info">Select text to see tooltip structure...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test Text for Selection</h3>
+        <p>This is a sample paragraph with some text that you can select to test the tooltip functionality. The tooltip should appear when you select any portion of this text.</p>
+        
+        <p class="test-text">Select this specific text to test tooltip structure and button ordering.</p>
+        
+        <p>Here's another paragraph with <strong>different text content</strong> for testing purposes. You can select individual words or entire sentences.</p>
+        
+        <ul>
+            <li>First test item</li>
+            <li>Second test item with some text</li>
+            <li>Third item for selection testing</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h3>Special Cases</h3>
+        <p><strong>Bold text selection</strong> - should show same tooltip structure</p>
+        <p><em>Italic text selection</em> - should show same tooltip structure</p>
+        <p>Code-like text: <code>function test() { return true; }</code></p>
+        <p>Text with numbers: 123, 456, 789</p>
+        <p>Email address: test@example.com</p>
+        <p>URL: https://example.com/test</p>
+    </div>
+
+    <script>
+        // Debug script to analyze tooltip structure
+        document.addEventListener('mouseup', function() {
+            setTimeout(() => {
+                const tooltip = document.querySelector('.selecton-tooltip');
+                if (tooltip) {
+                    const children = Array.from(tooltip.children);
+                    const structure = children.map((child, index) => {
+                        let className = child.className || 'unknown';
+                        let textContent = child.textContent || child.innerText || '';
+                        if (textContent.length > 20) textContent = textContent.substring(0, 20) + '...';
+                        
+                        return `${index}: ${className} - "${textContent}"`;
+                    });
+                    
+                    document.getElementById('debug-info').innerHTML = `
+                        <strong>Tooltip Structure Found:</strong><br>
+                        <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">${structure.join('\n')}</pre>
+                        
+                        <strong>Expected:</strong><br>
+                        <pre style="background: #d4edda; padding: 10px; border-radius: 4px; margin: 10px 0;">0: selecton-tooltip-arrow
+1: selecton-info-panel  
+2: selection-popup-button (Search)
+3: selection-popup-button (Copy)
+...</pre>
+                    `;
+                }
+            }, 100);
+        });
+
+        // Check if extension is loaded
+        setTimeout(() => {
+            if (typeof window.selectonEventManager !== 'undefined') {
+                document.getElementById('debug-info').innerHTML += '<br><br><strong style="color: green;">✓ Selecton extension is loaded!</strong>';
+            } else {
+                document.getElementById('debug-info').innerHTML += '<br><br><strong style="color: red;">✗ Selecton extension is NOT loaded!</strong>';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

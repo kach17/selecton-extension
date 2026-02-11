@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Read Aloud Implementation</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .test-text { background: #f5f5f5; padding: 10px; margin: 10px 0; cursor: pointer; }
+        .debug { background: #fff3cd; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Read Aloud Button Test</h1>
+    
+    <div class="debug">
+        <h3>Debug Information</h3>
+        <div id="debug-info">Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>English Text (should show button if English voice available)</h3>
+        <div class="test-text">This is a test in English language.</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Spanish Text (should show button only if Spanish voice available)</h3>
+        <div class="test-text">Este es un texto de prueba en español.</div>
+    </div>
+
+    <div class="test-section">
+        <h3>French Text (should show button only if French voice available)</h3>
+        <div class="test-text">Ceci est un texte de test en français.</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Chinese Text (should show button only if Chinese voice available)</h3>
+        <div class="test-text">这是一个中文测试文本。</div>
+    </div>
+
+    <script>
+        // Mock Chrome extension APIs for testing
+        window.chrome = {
+            i18n: {
+                detectLanguage: function(text, callback) {
+                    // Simple mock language detection
+                    const languages = {
+                        'This is a test in English language.': [{ language: 'en' }],
+                        'Este es un texto de prueba en español.': [{ language: 'es' }],
+                        'Ceci est un texte de test en français.': [{ language: 'fr' }],
+                        '这是一个中文测试文本。': [{ language: 'zh' }]
+                    };
+                    
+                    const detected = languages[text] || [{ language: 'en' }];
+                    callback({ languages: detected, isReliable: true });
+                }
+            }
+        };
+
+        // Mock configs
+        window.configs = {
+            showSpeakButton: true,
+            debugMode: true
+        };
+
+        // Mock selectedText
+        let selectedText = '';
+
+        // Mock tooltip
+        window.tooltip = { children: [] };
+
+        // Mock functions
+        window.addBasicTooltipButton = function(label, icon, callback) {
+            const button = document.createElement('button');
+            button.textContent = label;
+            button.onclick = callback;
+            document.body.appendChild(button);
+            return button;
+        };
+
+        window.speakButtonIcon = '🔊';
+
+        // Display debug info
+        function updateDebugInfo() {
+            const voices = window.speechSynthesis.getVoices();
+            const debugDiv = document.getElementById('debug-info');
+            
+            let html = '<h4>Available Voices:</h4><ul>';
+            voices.forEach(voice => {
+                html += `<li>${voice.name} (${voice.lang})</li>`;
+            });
+            html += '</ul>';
+            
+            html += '<h4>Language Families:</h4><ul>';
+            const langFamilies = new Set();
+            voices.forEach(voice => {
+                langFamilies.add(voice.lang.split('-')[0]);
+            });
+            langFamilies.forEach(lang => {
+                html += `<li>${lang}</li>`;
+            });
+            html += '</ul>';
+            
+            debugDiv.innerHTML = html;
+        }
+
+        // Load voices and update debug info
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = updateDebugInfo;
+        }
+        
+        // Initial update
+        setTimeout(updateDebugInfo, 100);
+
+        // Add click handlers for test texts
+        document.querySelectorAll('.test-text').forEach(element => {
+            element.addEventListener('click', function() {
+                selectedText = this.textContent;
+                console.log('Selected:', selectedText);
+                
+                // Clear previous buttons
+                document.querySelectorAll('button').forEach(btn => btn.remove());
+                
+                // Test the voice availability logic
+                console.log('Testing voice availability for:', selectedText);
+            });
+        });
+
+        console.log('Test page loaded. Click on any text to test voice availability.');
+    </script>
+
+    <!-- Include the actual implementation -->
+    <script src="src/ui/buttons/contextual-buttons.js"></script>
+</body>
+</html>

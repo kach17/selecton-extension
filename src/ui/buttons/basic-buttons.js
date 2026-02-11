@@ -1,4 +1,3 @@
-
 function addBasicTooltipButtons(layout) {
     // TODO: Provide option to use regular butttons instead; add text format buttons as one button 
     if (layout == 'textfield') {
@@ -17,13 +16,15 @@ function addBasicTooltipButtons(layout) {
                 }, true);
 
                 /// Add copy button 
-                copyButton = addBasicTooltipButton(copyLabel, copyButtonIcon, function () {
-                    try {
-                        textField.focus();
-                        document.execCommand('copy');
-                        removeSelectionOnPage();
-                    } catch (e) { console.log(e); }
-                });
+                if (configs.showCopyButton) {
+                    copyButton = addBasicTooltipButton(copyLabel, copyButtonIcon, function () {
+                        try {
+                            textField.focus();
+                            document.execCommand('copy');
+                            removeSelectionOnPage();
+                        } catch (e) { console.log(e); }
+                    });
+                }
 
                 /// Add paste button 
                 addBasicTooltipButton(pasteLabel, pasteButtonIcon, function () {
@@ -89,20 +90,35 @@ function addBasicTooltipButtons(layout) {
                 if (configs.collapseButtons)
                     try {
                         collapseButtons();
-                    } catch (e) { if (configs.debugMode) console.log(e); }
+                    } catch (e) { }
 
-                setCopyButtonTitle(copyButton);
+                if (copyButton) {
+                    setCopyButtonTitle(copyButton);
+                }
 
-            } catch (e) { if (configs.debugMode) console.log(e) }
+            } catch (e) { }
 
         } else {
-            if (configs.addPasteButton)
+            // No selection in text field - show paste button for empty fields
+            
+            // Double-check if field is actually empty by looking at the actual values
+            let actuallyEmpty = true;
+            if (isContentEditable) {
+                // For contenteditable, check innerHTML
+                actuallyEmpty = !textField.innerHTML || textField.innerHTML === '' || textField.innerHTML === '<br>';
+            } else {
+                // For input/textarea, check value
+                actuallyEmpty = !textField.value || textField.value.trim() === '';
+            }
+            
+            // Show paste button if enabled AND (paste-on-empty-only is disabled OR field is empty)
+            if (configs.addPasteButton && (!configs.addPasteOnlyEmptyField || actuallyEmpty))
                 try {
                     /// Add paste button 
                     let pasteButton = addBasicTooltipButton(pasteLabel, pasteButtonIcon, function () {
                         textField.focus();
 
-                        if (textField.getAttribute('contenteditable') !== null) {
+                        if (isContentEditable) {
                             let currentClipboardContent = getCurrentClipboard();
 
                             if (currentClipboardContent !== null && currentClipboardContent !== undefined && currentClipboardContent != '')
@@ -132,8 +148,8 @@ function addBasicTooltipButtons(layout) {
 
                 } catch (e) { if (configs.debugMode) console.log(e); }
 
-            /// Add 'clear' button
-            if (configs.addClearButton && isTextFieldEmpty == false)
+            /// Add 'clear' button ONLY if field is NOT empty
+            if (configs.addClearButton && !actuallyEmpty)
                 addBasicTooltipButton(clearLabel, clearIcon, function () {
                     removeSelectionOnPage();
                     textField.focus();
@@ -150,8 +166,10 @@ function addBasicTooltipButtons(layout) {
 
     } else {
         /// Add search button
-        // let selectedText = selection.toString();
-        searchButton = addLinkTooltipButton(searchLabel, searchButtonIcon, returnSearchUrl(selectedText.trim()), true);
+        if (configs.showSearchButton) {
+            // let selectedText = selection.toString();
+            searchButton = addLinkTooltipButton(searchLabel, searchButtonIcon, returnSearchUrl(selectedText.trim()), true);
+        }
 
         /// Populate panel with custom search buttons, when enabled
         if (configs.customSearchOptionsDisplay == 'panelCustomSearchStyle') {
@@ -174,14 +192,16 @@ function addBasicTooltipButtons(layout) {
 
         /// Add copy button
         /// TODO: Add option to copy plain text 
-        copyButton = addBasicTooltipButton(copyLabel, copyButtonIcon, function() {
-            document.execCommand('copy');
-            // removeSelectionOnPage();
-            // if (configs.hideTooltipOnActionButtonClick){
-            //     hideDragHandles();
-            //     hideTooltip();
-            // }
-        });
+        if (configs.showCopyButton) {
+            copyButton = addBasicTooltipButton(copyLabel, copyButtonIcon, function() {
+                document.execCommand('copy');
+                // removeSelectionOnPage();
+                // if (configs.hideTooltipOnActionButtonClick){
+                //     hideDragHandles();
+                //     hideTooltip();
+                // }
+            });
+        }
 
         /// Add share button
         if (configs.showShareButton) {
